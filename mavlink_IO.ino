@@ -185,8 +185,8 @@ void MavLink_receive() {
             Serial.print("Chanel 1 (raw): ");
             Serial.println(SERVOCHANNEL.servo2_raw);
             Serial.print("Chanel 2 (raw): ");
-            rightoutput = (SERVOCHANNEL.servo1_raw);
-            leftoutput = (SERVOCHANNEL.servo2_raw);
+            rightoutput = map(SERVOCHANNEL.servo1_raw, 1000, 2000, -1000, 1000);
+            leftoutput  = map(SERVOCHANNEL.servo2_raw, 1000, 2000, -1000, 1000);
           }
       }
     }
