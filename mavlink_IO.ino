@@ -1,13 +1,13 @@
 
 void request_datastream() {
   //Request Data from Pixhawk
-  uint8_t _system_id = 255; // id of computer which is sending the command (ground control software has id of 255)
-  uint8_t _component_id = 2; // seems like it can be any # except the number of what Pixhawk sys_id is
-  uint8_t _target_system = 1; // Id # of Pixhawk (should be 1)
-  uint8_t _target_component = 0; // Target component, 0 = all (seems to work with 0 or 1
+  uint8_t _system_id = 255;       // id of computer which is sending the command (ground control software has id of 255)
+  uint8_t _component_id = 2;      // seems like it can be any # except the number of what Pixhawk sys_id is
+  uint8_t _target_system = 1;     // Id # of Pixhawk (should be 1)
+  uint8_t _target_component = 0;  // Target component, 0 = all (seems to work with 0 or 1
   uint8_t _req_stream_id = MAV_DATA_STREAM_ALL;
-  uint16_t _req_message_rate = 0x08; //number of times per second to request the data in hex
-  uint8_t _start_stop = 1; //1 = start, 0 = stop
+  uint16_t _req_message_rate = 0xA;  //number of times per second to request the data in hex
+  uint8_t _start_stop = 1;           //1 = start, 0 = stop
   mavlink_message_t msg;
   uint8_t buf[MAVLINK_MAX_PACKET_LEN];
 
@@ -15,27 +15,126 @@ void request_datastream() {
   mavlink_msg_request_data_stream_pack(_system_id, _component_id, &msg, _target_system, _target_component, _req_stream_id, _req_message_rate, _start_stop);
   uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);  // Send the message (.write sends as bytes)
 
-  Serial2.write(buf, len); //Write data to serial port
+  Serial2.write(buf, len);  //Write data to serial port
 }
 
 
 
-void send_telemetry(){
-uint8_t _system_id = 255; // id of computer which is sending the command (ground control software has id of 255)
-uint8_t _component_id = 2; // seems like it can be any # except the number of what Pixhawk sys_id is
-uint32_t time_boot_ms = 0;
-float value;
-mavlink_message_t msg;
-uint8_t buf[MAVLINK_MAX_PACKET_LEN];
+void send_telemetry() {
+  mavlink_message_t msg;
+  uint32_t time_boot_ms = millis();
 
-char name = THRR1;
-value = (THRR1);
+  const char* name = "THRR1";
+  float value = THRR1;
+  mavlink_msg_named_value_float_pack(255, 2, &msg, time_boot_ms, name, value);
+  uint8_t buf[MAVLINK_MAX_PACKET_LEN];
+  uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
+  Serial2.write(buf, len);
 
-mavlink_msg_named_value_float_pack(_system_id, _component_id, &msg, time_boot_ms,name,value);
-uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);  // Send the message (.write sends as bytes)
+  name = "THRL1";
+  value = THRL1;
+  mavlink_msg_named_value_float_pack(255, 2, &msg, time_boot_ms, name, value);
+  len = mavlink_msg_to_send_buffer(buf, &msg);
+  Serial2.write(buf, len);
 
-  Serial2.write(buf, len); //Write data to serial port
+  name = "THRL2";
+  value = THRL1;
+  mavlink_msg_named_value_float_pack(255, 2, &msg, time_boot_ms, name, value);
+  len = mavlink_msg_to_send_buffer(buf, &msg);
+  Serial2.write(buf, len);
+
+  name = "THRL2";
+  value = THRL2;
+  mavlink_msg_named_value_float_pack(255, 2, &msg, time_boot_ms, name, value);
+  len = mavlink_msg_to_send_buffer(buf, &msg);
+  Serial2.write(buf, len);
+
+  name = "THRL3";
+  value = THRL2;
+  mavlink_msg_named_value_float_pack(255, 2, &msg, time_boot_ms, name, value);
+  len = mavlink_msg_to_send_buffer(buf, &msg);
+  Serial2.write(buf, len);
+
+  name = "THRL3";
+  value = THRL1;
+  mavlink_msg_named_value_float_pack(255, 2, &msg, time_boot_ms, name, value);
+  len = mavlink_msg_to_send_buffer(buf, &msg);
+  Serial2.write(buf, len);
+
+  name = "RPMR1";
+  value = RPMR1;
+  mavlink_msg_named_value_float_pack(255, 2, &msg, time_boot_ms, name, value);
+  len = mavlink_msg_to_send_buffer(buf, &msg);
+  Serial2.write(buf, len);
+
+  name = "RPML1";
+  value = RPML1;
+  mavlink_msg_named_value_float_pack(255, 2, &msg, time_boot_ms, name, value);
+  len = mavlink_msg_to_send_buffer(buf, &msg);
+  Serial2.write(buf, len);
+
+  name = "RPMR2";
+  value = RPMR2;
+  mavlink_msg_named_value_float_pack(255, 2, &msg, time_boot_ms, name, value);
+  len = mavlink_msg_to_send_buffer(buf, &msg);
+  Serial2.write(buf, len);
+
+  name = "RPML2";
+  value = RPML2;
+  mavlink_msg_named_value_float_pack(255, 2, &msg, time_boot_ms, name, value);
+  len = mavlink_msg_to_send_buffer(buf, &msg);
+  Serial2.write(buf, len);
+
+  name = "RPMR3";
+  value = RPMR3;
+  mavlink_msg_named_value_float_pack(255, 2, &msg, time_boot_ms, name, value);
+  buf[MAVLINK_MAX_PACKET_LEN];
+  len = mavlink_msg_to_send_buffer(buf, &msg);
+  Serial2.write(buf, len);
+
+  name = "RPML3";
+  value = RPML3;
+  mavlink_msg_named_value_float_pack(255, 2, &msg, time_boot_ms, name, value);
+  len = mavlink_msg_to_send_buffer(buf, &msg);
+  Serial2.write(buf, len);
+
+  name = "VOLT1";
+  value = VOLT1;
+  mavlink_msg_named_value_float_pack(255, 2, &msg, time_boot_ms, name, value);
+  len = mavlink_msg_to_send_buffer(buf, &msg);
+  Serial2.write(buf, len);
+
+  name = "VOLT2";
+  value = VOLT2;
+  mavlink_msg_named_value_float_pack(255, 2, &msg, time_boot_ms, name, value);
+  len = mavlink_msg_to_send_buffer(buf, &msg);
+  Serial2.write(buf, len);
+
+  name = "VOLT3";
+  value = VOLT3;
+  mavlink_msg_named_value_float_pack(255, 2, &msg, time_boot_ms, name, value);
+  len = mavlink_msg_to_send_buffer(buf, &msg);
+  Serial2.write(buf, len);
+
+  name = "TEMP1";
+  value = TEMP1;
+  mavlink_msg_named_value_float_pack(255, 2, &msg, time_boot_ms, name, value);
+  len = mavlink_msg_to_send_buffer(buf, &msg);
+  Serial2.write(buf, len);
+
+  name = "TEMP2";
+  value = TEMP2;
+  mavlink_msg_named_value_float_pack(255, 2, &msg, time_boot_ms, name, value);
+  len = mavlink_msg_to_send_buffer(buf, &msg);
+  Serial2.write(buf, len);
+
+  name = "TEMP3";
+  value = TEMP3;
+  mavlink_msg_named_value_float_pack(255, 2, &msg, time_boot_ms, name, value);
+  len = mavlink_msg_to_send_buffer(buf, &msg);
+  Serial2.write(buf, len);
 }
+
 
 
 
@@ -93,5 +192,3 @@ void MavLink_receive() {
     }
   }
 }
-
-
