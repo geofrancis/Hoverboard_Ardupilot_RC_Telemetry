@@ -1,5 +1,5 @@
 
-void request_datastream() {
+void request_Mavlink() {
   //Request Data from Pixhawk
   uint8_t _system_id = 255;       // id of computer which is sending the command (ground control software has id of 255)
   uint8_t _component_id = 2;      // seems like it can be any # except the number of what Pixhawk sys_id is
@@ -20,7 +20,7 @@ void request_datastream() {
 
 
 
-void send_telemetry() {
+void Mavlink_Telemetry() {
   mavlink_message_t msg;
   uint32_t time_boot_ms = millis();
 
@@ -138,7 +138,7 @@ void send_telemetry() {
 
 
 
-void MavLink_receive() {
+void MavLink_RC() {
   mavlink_message_t msg;
   mavlink_status_t status;
 
@@ -150,9 +150,6 @@ void MavLink_receive() {
 
       //Handle new message from autopilot
       switch (msg.msgid) {
-
-
-
         case MAVLINK_MSG_ID_HEARTBEAT:  // #0: Heartbeat
           {
 
@@ -174,9 +171,6 @@ void MavLink_receive() {
             //    Serial.println();
           }
           break;
-
-
-
         case MAVLINK_MSG_ID_SERVO_OUTPUT_RAW:  // #35
           {
             mavlink_servo_output_raw_t SERVOCHANNEL;
@@ -186,7 +180,8 @@ void MavLink_receive() {
             Serial.println(SERVOCHANNEL.servo2_raw);
             Serial.print("Chanel 2 (raw): ");
             rightoutput = map(SERVOCHANNEL.servo1_raw, 1000, 2000, -1000, 1000);
-            leftoutput  = map(SERVOCHANNEL.servo2_raw, 1000, 2000, -1000, 1000);
+            leftoutput = map(SERVOCHANNEL.servo2_raw, 1000, 2000, -1000, 1000);
+            Send(leftoutput, rightoutput);
           }
       }
     }
