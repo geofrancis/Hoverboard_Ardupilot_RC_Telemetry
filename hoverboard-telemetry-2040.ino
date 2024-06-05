@@ -12,9 +12,7 @@ SerialPIO HoverSerial3(6, 7);
 
 int leftoutput = 0;
 int rightoutput = 0;
-low voltage 
-speed limit
-power control 
+
 
 
 
