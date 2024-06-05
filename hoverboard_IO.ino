@@ -8,7 +8,7 @@ void Send(int16_t uSteer, int16_t uSpeed) {
   // Write to Serial
   HoverSerial1.write((uint8_t *)&Command, sizeof(Command));
   HoverSerial2.write((uint8_t *)&Command, sizeof(Command));
-  //HoverSerial3.write((uint8_t *) &Command, sizeof(Command));
+  HoverSerial3.write((uint8_t *) &Command, sizeof(Command));
 }
 
 
@@ -83,8 +83,6 @@ void Receive1() {
   incomingBytePrev = incomingByte;
 }
 
-
-
 void Receive2() {
   // Check for new data availability in the Serial buffer
   if (HoverSerial2.available()) {
@@ -152,7 +150,6 @@ void Receive2() {
   // Update previous states
   incomingBytePrev = incomingByte;
 }
-
 
 void Receive3() {
   // Check for new data availability in the Serial buffer
