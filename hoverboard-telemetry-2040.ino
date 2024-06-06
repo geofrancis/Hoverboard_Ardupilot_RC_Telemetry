@@ -12,7 +12,9 @@ SerialPIO HoverSerial3(6, 7);
 
 int leftoutput = 0;
 int rightoutput = 0;
-
+//low voltage 
+//speed limit
+//power control 
 
 
 
@@ -95,7 +97,6 @@ void loop() {
 
   MavLink_RC();
   Mavlink_Telemetry();  
-
   Receive1();
   Receive2();
   Receive3();
