@@ -1,221 +1,190 @@
-void Send(int16_t uSteer, int16_t uSpeed) {
-  // Create command
-  Command.start = (uint16_t)START_FRAME;
-  Command.steer = (int16_t)uSteer;
-  Command.speed = (int16_t)uSpeed;
-  Command.checksum = (uint16_t)(Command.start ^ Command.steer ^ Command.speed);
 
-  // Write to Serial
-  HoverSerial1.write((uint8_t *)&Command, sizeof(Command));
-  HoverSerial2.write((uint8_t *)&Command, sizeof(Command));
-  HoverSerial3.write((uint8_t *) &Command, sizeof(Command));
+void request_Mavlink() {
+  //Request Data from Pixhawk
+  uint8_t _system_id = 255;       // id of computer which is sending the command (ground control software has id of 255)
+  uint8_t _component_id = 2;      // seems like it can be any # except the number of what Pixhawk sys_id is
+  uint8_t _target_system = 1;     // Id # of Pixhawk (should be 1)
+  uint8_t _target_component = 0;  // Target component, 0 = all (seems to work with 0 or 1
+  uint8_t _req_stream_id = MAV_DATA_STREAM_ALL;
+  uint16_t _req_message_rate = 0xA;  //number of times per second to request the data in hex
+  uint8_t _start_stop = 1;           //1 = start, 0 = stop
+  mavlink_message_t msg;
+  uint8_t buf[MAVLINK_MAX_PACKET_LEN];
+
+  // Pack the message
+  mavlink_msg_request_data_stream_pack(_system_id, _component_id, &msg, _target_system, _target_component, _req_stream_id, _req_message_rate, _start_stop);
+  uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);  // Send the message (.write sends as bytes)
+
+  Serial2.write(buf, len);  //Write data to serial port
+}
+
+
+
+void Mavlink_Telemetry() {
+  mavlink_message_t msg;
+  uint32_t time_boot_ms = millis();
+
+  const char* name = "THRR1";
+  float value = THRR1;
+  mavlink_msg_named_value_float_pack(255, 2, &msg, time_boot_ms, name, value);
+  uint8_t buf[MAVLINK_MAX_PACKET_LEN];
+  uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
+  Serial2.write(buf, len);
+
+  name = "THRL1";
+  value = THRL1;
+  mavlink_msg_named_value_float_pack(255, 2, &msg, time_boot_ms, name, value);
+  len = mavlink_msg_to_send_buffer(buf, &msg);
+  Serial2.write(buf, len);
+
+  name = "THRL2";
+  value = THRL1;
+  mavlink_msg_named_value_float_pack(255, 2, &msg, time_boot_ms, name, value);
+  len = mavlink_msg_to_send_buffer(buf, &msg);
+  Serial2.write(buf, len);
+
+  name = "THRL2";
+  value = THRL2;
+  mavlink_msg_named_value_float_pack(255, 2, &msg, time_boot_ms, name, value);
+  len = mavlink_msg_to_send_buffer(buf, &msg);
+  Serial2.write(buf, len);
+
+  name = "THRL3";
+  value = THRL2;
+  mavlink_msg_named_value_float_pack(255, 2, &msg, time_boot_ms, name, value);
+  len = mavlink_msg_to_send_buffer(buf, &msg);
+  Serial2.write(buf, len);
+
+  name = "THRL3";
+  value = THRL1;
+  mavlink_msg_named_value_float_pack(255, 2, &msg, time_boot_ms, name, value);
+  len = mavlink_msg_to_send_buffer(buf, &msg);
+  Serial2.write(buf, len);
+
+  name = "RPMR1";
+  value = RPMR1;
+  mavlink_msg_named_value_float_pack(255, 2, &msg, time_boot_ms, name, value);
+  len = mavlink_msg_to_send_buffer(buf, &msg);
+  Serial2.write(buf, len);
+
+  name = "RPML1";
+  value = RPML1;
+  mavlink_msg_named_value_float_pack(255, 2, &msg, time_boot_ms, name, value);
+  len = mavlink_msg_to_send_buffer(buf, &msg);
+  Serial2.write(buf, len);
+
+  name = "RPMR2";
+  value = RPMR2;
+  mavlink_msg_named_value_float_pack(255, 2, &msg, time_boot_ms, name, value);
+  len = mavlink_msg_to_send_buffer(buf, &msg);
+  Serial2.write(buf, len);
+
+  name = "RPML2";
+  value = RPML2;
+  mavlink_msg_named_value_float_pack(255, 2, &msg, time_boot_ms, name, value);
+  len = mavlink_msg_to_send_buffer(buf, &msg);
+  Serial2.write(buf, len);
+
+  name = "RPMR3";
+  value = RPMR3;
+  mavlink_msg_named_value_float_pack(255, 2, &msg, time_boot_ms, name, value);
+  buf[MAVLINK_MAX_PACKET_LEN];
+  len = mavlink_msg_to_send_buffer(buf, &msg);
+  Serial2.write(buf, len);
+
+  name = "RPML3";
+  value = RPML3;
+  mavlink_msg_named_value_float_pack(255, 2, &msg, time_boot_ms, name, value);
+  len = mavlink_msg_to_send_buffer(buf, &msg);
+  Serial2.write(buf, len);
+
+  name = "VOLT1";
+  value = VOLT1;
+  mavlink_msg_named_value_float_pack(255, 2, &msg, time_boot_ms, name, value);
+  len = mavlink_msg_to_send_buffer(buf, &msg);
+  Serial2.write(buf, len);
+
+  name = "VOLT2";
+  value = VOLT2;
+  mavlink_msg_named_value_float_pack(255, 2, &msg, time_boot_ms, name, value);
+  len = mavlink_msg_to_send_buffer(buf, &msg);
+  Serial2.write(buf, len);
+
+  name = "VOLT3";
+  value = VOLT3;
+  mavlink_msg_named_value_float_pack(255, 2, &msg, time_boot_ms, name, value);
+  len = mavlink_msg_to_send_buffer(buf, &msg);
+  Serial2.write(buf, len);
+
+  name = "TEMP1";
+  value = TEMP1;
+  mavlink_msg_named_value_float_pack(255, 2, &msg, time_boot_ms, name, value);
+  len = mavlink_msg_to_send_buffer(buf, &msg);
+  Serial2.write(buf, len);
+
+  name = "TEMP2";
+  value = TEMP2;
+  mavlink_msg_named_value_float_pack(255, 2, &msg, time_boot_ms, name, value);
+  len = mavlink_msg_to_send_buffer(buf, &msg);
+  Serial2.write(buf, len);
+
+  name = "TEMP3";
+  value = TEMP3;
+  mavlink_msg_named_value_float_pack(255, 2, &msg, time_boot_ms, name, value);
+  len = mavlink_msg_to_send_buffer(buf, &msg);
+  Serial2.write(buf, len);
 }
 
 
 
 
+void MavLink_RC() {
+  mavlink_message_t msg;
+  mavlink_status_t status;
 
-void Receive1() {
-  // Check for new data availability in the Serial buffer
-  if (HoverSerial1.available()) {
-    incomingByte = HoverSerial1.read();                                  // Read the incoming byte
-    bufStartFrame = ((uint16_t)(incomingByte) << 8) | incomingBytePrev;  // Construct the start frame
-  } else {
-    return;
-  }
+  while (Serial2.available()) {
+    uint8_t c = Serial2.read();
 
-// If DEBUG_RX is defined print all incoming bytes
-#ifdef DEBUG_RX
-  Serial.print(incomingByte);
-  return;
-#endif
+    //Get new message
+    if (mavlink_parse_char(MAVLINK_COMM_0, c, &msg, &status)) {
 
-  // Copy received data
-  if (bufStartFrame == START_FRAME) {  // Initialize if new data is detected
-    p = (byte *)&NewFeedback;
-    *p++ = incomingBytePrev;
-    *p++ = incomingByte;
-    idx = 2;
-  } else if (idx >= 2 && idx < sizeof(SerialFeedback)) {  // Save the new received data
-    *p++ = incomingByte;
-    idx++;
-  }
+      //Handle new message from autopilot
+      switch (msg.msgid) {
+        case MAVLINK_MSG_ID_HEARTBEAT:  // #0: Heartbeat
+          {
 
-  // Check if we reached the end of the package
-  if (idx == sizeof(SerialFeedback)) {
-    uint16_t checksum;
-    checksum = (uint16_t)(NewFeedback.start ^ NewFeedback.cmd1 ^ NewFeedback.cmd2 ^ NewFeedback.speedR_meas ^ NewFeedback.speedL_meas
-                          ^ NewFeedback.batVoltage ^ NewFeedback.boardTemp ^ NewFeedback.cmdLed);
+            mavlink_heartbeat_t hb;
+            mavlink_msg_heartbeat_decode(&msg, &hb);
 
-    // Check validity of the new data
-    if (NewFeedback.start == START_FRAME && checksum == NewFeedback.checksum) {
-      // Copy the new data
-      memcpy(&Feedback, &NewFeedback, sizeof(SerialFeedback));
-      THRR1 = (Feedback.cmd1);
-      THRL1 = (Feedback.cmd2);
-      RPMR1 = (Feedback.speedR_meas);
-      RPML1 = (Feedback.speedL_meas);
-      VOLT1 = (Feedback.batVoltage);
-      TEMP1 = (Feedback.boardTemp);
-
-      // Print data to built-in Serial
-      Serial.print("1: ");
-      Serial.print(Feedback.cmd1);
-      Serial.print(" 2: ");
-      Serial.print(Feedback.cmd2);
-      Serial.print(" 3: ");
-      Serial.print(Feedback.speedR_meas);
-      Serial.print(" 4: ");
-      Serial.print(Feedback.speedL_meas);
-      Serial.print(" 5: ");
-      Serial.print(Feedback.batVoltage);
-      Serial.print(" 6: ");
-      Serial.print(Feedback.boardTemp);
-      Serial.print(" 7: ");
-      Serial.println(Feedback.cmdLed);
-    } else {
-      Serial.println("Non-valid data skipped");
+            Serial.print("\nFlight Mode: ");
+            Serial.println(hb.custom_mode);
+            
+            //  Serial.print("Type: ");
+            //  Serial.println(hb.type);
+            //  Serial.print("Autopilot: ");
+            //  Serial.println(hb.autopilot);
+            //   Serial.print("Base Mode: ");
+            //   Serial.println(hb.base_mode);
+             Serial.print("System Status: ");
+             Serial.println(hb.system_status);
+            //   Serial.print("Mavlink Version: ");
+            //   Serial.println(hb.mavlink_version);
+            //    Serial.println();
+          }
+          break;
+        case MAVLINK_MSG_ID_SERVO_OUTPUT_RAW:  // #35
+          {
+            mavlink_servo_output_raw_t SERVOCHANNEL;
+            mavlink_msg_servo_output_raw_decode(&msg, &SERVOCHANNEL);
+            Serial.println(SERVOCHANNEL.servo1_raw);
+            Serial.print("Chanel 1 (raw): ");
+            Serial.println(SERVOCHANNEL.servo2_raw);
+            Serial.print("Chanel 2 (raw): ");
+            rightoutput = map(SERVOCHANNEL.servo1_raw, 1000, 2000, -1000, 1000);
+            leftoutput = map(SERVOCHANNEL.servo2_raw, 1000, 2000, -1000, 1000);
+            Send(leftoutput, rightoutput);
+          }
+      }
     }
-    idx = 0;  // Reset the index (it prevents to enter in this if condition in the next cycle)
   }
-
-  // Update previous states
-  incomingBytePrev = incomingByte;
 }
-
-void Receive2() {
-  // Check for new data availability in the Serial buffer
-  if (HoverSerial2.available()) {
-    incomingByte = HoverSerial2.read();                                  // Read the incoming byte
-    bufStartFrame = ((uint16_t)(incomingByte) << 8) | incomingBytePrev;  // Construct the start frame
-  } else {
-    return;
-  }
-
-// If DEBUG_RX is defined print all incoming bytes
-#ifdef DEBUG_RX
-  Serial.print(incomingByte);
-  return;
-#endif
-
-  // Copy received data
-  if (bufStartFrame == START_FRAME) {  // Initialize if new data is detected
-    p = (byte *)&NewFeedback;
-    *p++ = incomingBytePrev;
-    *p++ = incomingByte;
-    idx = 2;
-  } else if (idx >= 2 && idx < sizeof(SerialFeedback)) {  // Save the new received data
-    *p++ = incomingByte;
-    idx++;
-  }
-
-  // Check if we reached the end of the package
-  if (idx == sizeof(SerialFeedback)) {
-    uint16_t checksum;
-    checksum = (uint16_t)(NewFeedback.start ^ NewFeedback.cmd1 ^ NewFeedback.cmd2 ^ NewFeedback.speedR_meas ^ NewFeedback.speedL_meas
-                          ^ NewFeedback.batVoltage ^ NewFeedback.boardTemp ^ NewFeedback.cmdLed);
-
-    // Check validity of the new data
-    if (NewFeedback.start == START_FRAME && checksum == NewFeedback.checksum) {
-      // Copy the new data
-      memcpy(&Feedback, &NewFeedback, sizeof(SerialFeedback));
-      THRR2 = (Feedback.cmd1);
-      THRL2 = (Feedback.cmd2);
-      RPMR2 = (Feedback.speedR_meas);
-      RPML2 = (Feedback.speedL_meas);
-      VOLT2 = (Feedback.batVoltage);
-      TEMP2 = (Feedback.boardTemp);
-
-      // Print data to built-in Serial
-      Serial.print("1: ");
-      Serial.print(Feedback.cmd1);
-      Serial.print(" 2: ");
-      Serial.print(Feedback.cmd2);
-      Serial.print(" 3: ");
-      Serial.print(Feedback.speedR_meas);
-      Serial.print(" 4: ");
-      Serial.print(Feedback.speedL_meas);
-      Serial.print(" 5: ");
-      Serial.print(Feedback.batVoltage);
-      Serial.print(" 6: ");
-      Serial.print(Feedback.boardTemp);
-      Serial.print(" 7: ");
-      Serial.println(Feedback.cmdLed);
-    } else {
-      Serial.println("Non-valid data skipped");
-    }
-    idx = 0;  // Reset the index (it prevents to enter in this if condition in the next cycle)
-  }
-
-  // Update previous states
-  incomingBytePrev = incomingByte;
-}
-
-void Receive3() {
-  // Check for new data availability in the Serial buffer
-  if (HoverSerial3.available()) {
-    incomingByte = HoverSerial3.read();                                  // Read the incoming byte
-    bufStartFrame = ((uint16_t)(incomingByte) << 8) | incomingBytePrev;  // Construct the start frame
-  } else {
-    return;
-  }
-
-// If DEBUG_RX is defined print all incoming bytes
-#ifdef DEBUG_RX
-  Serial.print(incomingByte);
-  return;
-#endif
-
-  // Copy received data
-  if (bufStartFrame == START_FRAME) {  // Initialize if new data is detected
-    p = (byte *)&NewFeedback;
-    *p++ = incomingBytePrev;
-    *p++ = incomingByte;
-    idx = 2;
-  } else if (idx >= 2 && idx < sizeof(SerialFeedback)) {  // Save the new received data
-    *p++ = incomingByte;
-    idx++;
-  }
-
-  // Check if we reached the end of the package
-  if (idx == sizeof(SerialFeedback)) {
-    uint16_t checksum;
-    checksum = (uint16_t)(NewFeedback.start ^ NewFeedback.cmd1 ^ NewFeedback.cmd2 ^ NewFeedback.speedR_meas ^ NewFeedback.speedL_meas
-                          ^ NewFeedback.batVoltage ^ NewFeedback.boardTemp ^ NewFeedback.cmdLed);
-
-    // Check validity of the new data
-    if (NewFeedback.start == START_FRAME && checksum == NewFeedback.checksum) {
-      // Copy the new data
-      memcpy(&Feedback, &NewFeedback, sizeof(SerialFeedback));
-      THRR3 = (Feedback.cmd1);
-      THRL3 = (Feedback.cmd2);
-      RPMR3 = (Feedback.speedR_meas);
-      RPML3 = (Feedback.speedL_meas);
-      VOLT3 = (Feedback.batVoltage);
-      TEMP3 = (Feedback.boardTemp);
-
-      // Print data to built-in Serial
-      Serial.print("1: ");
-      Serial.print(Feedback.cmd1);
-      Serial.print(" 2: ");
-      Serial.print(Feedback.cmd2);
-      Serial.print(" 3: ");
-      Serial.print(Feedback.speedR_meas);
-      Serial.print(" 4: ");
-      Serial.print(Feedback.speedL_meas);
-      Serial.print(" 5: ");
-      Serial.print(Feedback.batVoltage);
-      Serial.print(" 6: ");
-      Serial.print(Feedback.boardTemp);
-      Serial.print(" 7: ");
-      Serial.println(Feedback.cmdLed);
-    } else {
-      Serial.println("Non-valid data skipped");
-    }
-    idx = 0;  // Reset the index (it prevents to enter in this if condition in the next cycle)
-  }
-
-  // Update previous states
-  incomingBytePrev = incomingByte;
-}
-
