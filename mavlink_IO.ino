@@ -156,16 +156,17 @@ void MavLink_RC() {
             mavlink_heartbeat_t hb;
             mavlink_msg_heartbeat_decode(&msg, &hb);
 
-            //  Serial.print("\nFlight Mode: (10 ");
-            // Serial.println(hb.custom_mode);
+            Serial.print("\nFlight Mode: ");
+            Serial.println(hb.custom_mode);
+            
             //  Serial.print("Type: ");
             //  Serial.println(hb.type);
             //  Serial.print("Autopilot: ");
             //  Serial.println(hb.autopilot);
             //   Serial.print("Base Mode: ");
             //   Serial.println(hb.base_mode);
-            //   Serial.print("System Status: ");
-            //   Serial.println(hb.system_status);
+             Serial.print("System Status: ");
+             Serial.println(hb.system_status);
             //   Serial.print("Mavlink Version: ");
             //   Serial.println(hb.mavlink_version);
             //    Serial.println();
