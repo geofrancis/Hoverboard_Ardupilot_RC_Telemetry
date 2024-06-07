@@ -7,6 +7,16 @@ SerialPIO HoverSerial1(2, 3);
 SerialPIO HoverSerial2(4, 5);
 SerialPIO HoverSerial3(6, 7);
 
+const int board1power = 8;  
+const int board2power = 9;    
+const int board3power = 10;  
+
+const int board1switch = 11;    
+const int board2switch = 12; 
+const int board3switch = 13;   
+
+
+
 #define START_FRAME 0xABCD  // [-] Start frme definition for reliable serial communication
 #define DEBUG_RX            // [-] Debug received data. Prints all bytes to serial (comment-out to disable)
 
@@ -16,8 +26,24 @@ int rightoutput = 0;
 //speed limit
 //power control 
 
+int boardson = 0;
+int board1on = 0;
+int board2on = 0;
+int board3on = 0;
 
+int board1error = 0;
+int board2error = 0;
+int board3error = 0;
 
+int startupok = 0;
+int startcycle = 0;
+int stopcycle = 0;
+
+unsigned long buttonMillis = 0; 
+unsigned long checkMillis = 0; 
+
+const long buttoninterval = 2000;  // time to hold power switch
+const long boardinterval = 4000;  // time to hold power switch
 
 
 int THRR1;
@@ -84,8 +110,18 @@ void setup() {
   HoverSerial1.begin(115200);
   HoverSerial2.begin(115200);
   HoverSerial3.begin(115200);
-
   request_Mavlink();
+
+
+
+  pinMode(board1power,  INPUT);
+  pinMode(board2power,  INPUT);
+  pinMode(board3power,  INPUT);
+
+  pinMode(board1switch, OUTPUT);
+  pinMode(board2switch, OUTPUT);
+  pinMode(board3switch, OUTPUT);
+
 }
 
 
@@ -100,6 +136,9 @@ void loop() {
   Receive1();
   Receive2();
   Receive3();
+
+  powercycleon();
+  powercycleoff();
 
 
 }
