@@ -8,7 +8,8 @@ void Send(int16_t uSteer, int16_t uSpeed) {
   // Write to Serial
   HoverSerial1.write((uint8_t *)&Command, sizeof(Command));
   HoverSerial2.write((uint8_t *)&Command, sizeof(Command));
-  HoverSerial3.write((uint8_t *)&Command, sizeof(Command));
+ // HoverSerial3.write((uint8_t *)&Command, sizeof(Command));
+ Serial.println(leftoutput);
 }
 
 
@@ -153,8 +154,8 @@ void Receive2() {
 
 void Receive3() {
   // Check for new data availability in the Serial buffer
-  if (HoverSerial3.available()) {
-    incomingByte = HoverSerial3.read();                                  // Read the incoming byte
+  if (Serial2.available()) {
+    incomingByte = Serial2.read();                                  // Read the incoming byte
     bufStartFrame = ((uint16_t)(incomingByte) << 8) | incomingBytePrev;  // Construct the start frame
   } else {
     return;
