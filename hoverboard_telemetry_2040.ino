@@ -75,7 +75,8 @@ int TEMP2;
 int VOLT3;
 int TEMP3;
 
-
+float roll = 0;
+float pitch = 0;
 
 uint8_t idx = 0;         // Index for new data pointer
 uint16_t bufStartFrame;  // Buffer Start Frame
@@ -140,7 +141,7 @@ void loop() {
   MavLink_RC();
   Receive1();
   Receive2();
-  Receive3();
+  //Receive3();
 
 unsigned long currentMillis = millis();
 
@@ -149,6 +150,7 @@ unsigned long currentMillis = millis();
     previousMillis = currentMillis;
   Mavlink_Telemetry1();  
   Mavlink_Telemetry2(); 
+  //Mavlink_Telemetry3(); 
   }
   //powercycleon();
   //powercycleoff();
