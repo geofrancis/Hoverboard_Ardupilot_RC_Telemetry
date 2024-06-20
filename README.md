@@ -2,7 +2,7 @@ Hoverboard ESC manager,
  control and telemetry via mavlink for multiple hoverboard controllers
 
 working:    
-map left and right hoverboard channels to servo outputs 1 and 2.
+map left and right hoverboard channels to servo outputs 1 and 2.     
 send telemetry from up to 3 hoverboards to ardupilot as named floats. 
 
 still to do:    
