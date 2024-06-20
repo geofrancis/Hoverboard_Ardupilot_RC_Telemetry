@@ -9,7 +9,7 @@ void Send(int16_t uSteer, int16_t uSpeed) {
   HoverSerial1.write((uint8_t *)&Command, sizeof(Command));
   HoverSerial2.write((uint8_t *)&Command, sizeof(Command));
  // HoverSerial3.write((uint8_t *)&Command, sizeof(Command));
- Serial.println(leftoutput);
+
 }
 
 
@@ -58,22 +58,6 @@ void Receive1() {
       RPML1 = (Feedback.speedL_meas);
       VOLT1 = (Feedback.batVoltage);
       TEMP1 = (Feedback.boardTemp);
-
-      // Print data to built-in Serial
-      Serial.print("1: ");
-      Serial.print(Feedback.cmd1);
-      Serial.print(" 2: ");
-      Serial.print(Feedback.cmd2);
-      Serial.print(" 3: ");
-      Serial.print(Feedback.speedR_meas);
-      Serial.print(" 4: ");
-      Serial.print(Feedback.speedL_meas);
-      Serial.print(" 5: ");
-      Serial.print(Feedback.batVoltage);
-      Serial.print(" 6: ");
-      Serial.print(Feedback.boardTemp);
-      Serial.print(" 7: ");
-      Serial.println(Feedback.cmdLed);
     } else {
       Serial.println("Non-valid data skipped");
     }
@@ -128,20 +112,7 @@ void Receive2() {
       TEMP2 = (Feedback.boardTemp);
 
       // Print data to built-in Serial
-      Serial.print("1: ");
-      Serial.print(Feedback.cmd1);
-      Serial.print(" 2: ");
-      Serial.print(Feedback.cmd2);
-      Serial.print(" 3: ");
-      Serial.print(Feedback.speedR_meas);
-      Serial.print(" 4: ");
-      Serial.print(Feedback.speedL_meas);
-      Serial.print(" 5: ");
-      Serial.print(Feedback.batVoltage);
-      Serial.print(" 6: ");
-      Serial.print(Feedback.boardTemp);
-      Serial.print(" 7: ");
-      Serial.println(Feedback.cmdLed);
+
     } else {
       Serial.println("Non-valid data skipped");
     }
@@ -195,21 +166,6 @@ void Receive3() {
       VOLT3 = (Feedback.batVoltage);
       TEMP3 = (Feedback.boardTemp);
 
-      // Print data to built-in Serial
-      Serial.print("1: ");
-      Serial.print(Feedback.cmd1);
-      Serial.print(" 2: ");
-      Serial.print(Feedback.cmd2);
-      Serial.print(" 3: ");
-      Serial.print(Feedback.speedR_meas);
-      Serial.print(" 4: ");
-      Serial.print(Feedback.speedL_meas);
-      Serial.print(" 5: ");
-      Serial.print(Feedback.batVoltage);
-      Serial.print(" 6: ");
-      Serial.print(Feedback.boardTemp);
-      Serial.print(" 7: ");
-      Serial.println(Feedback.cmdLed);
     } else {
       Serial.println("Non-valid data skipped");
     }
@@ -220,27 +176,13 @@ void Receive3() {
   incomingBytePrev = incomingByte;
 }
 
-void powercycleon() {
+void powercycleon1() {
 
       if (digitalRead(board1power) == HIGH) {
         board1on = 1;
       } else {
         board1on = 0;
       }
-
-      if (digitalRead(board2power) == HIGH) {
-        board2on = 1;
-      } else {
-        board2on = 0;
-      }
-
-      if (digitalRead(board3power) == HIGH) {
-        board3on = 1;
-      } else {
-        board3on = 0;
-      }
-
-
 
   if (boardson = 1) {
     if (startcycle = 1) {
@@ -253,22 +195,6 @@ void powercycleon() {
         }
       }
 
-      if (board2error = 0) {
-        if (board2on == 0) {
-          digitalWrite(board2switch, HIGH);
-        } else {
-          digitalWrite(board2switch, LOW);
-        }
-      }
-
-      if (board3error = 0) {
-        if (board3on == 0) {
-          digitalWrite(board3switch, HIGH);
-        } else {
-          digitalWrite(board3switch, LOW);
-        }
-      }
-//////////////////
 
       // if switch is on, turn it off after timer
       unsigned long currentMillisb1 = millis();
@@ -279,18 +205,9 @@ void powercycleon() {
           digitalWrite(board1switch, LOW);
           board1error = 1;
         }
-        if (digitalRead(board1switch) == HIGH) {
-          digitalWrite(board1switch, LOW);
-          board2error = 1;
-        }
-        if (digitalRead(board1switch) == HIGH) {
-          digitalWrite(board1switch, LOW);
-          board3error = 1;
-        }
       }
 
 
-      ////////////////
 
       //wait and check if board has powered on.
       unsigned long currentMillisp1 = millis();
@@ -303,20 +220,6 @@ void powercycleon() {
           Serial.print("Board 1 ON");
         } else {
           Serial.print("Board 1 ERROR");
-        }
-
-        if (board2on == 1) {
-          board2error = 0;
-          Serial.print("Board 2 ON");
-        } else {
-          Serial.print("Board 2 ERROR");
-        }
-
-        if (board3on == 1) {
-          board3error = 0;
-          Serial.print("Board 3 ON");
-        } else {
-          Serial.print("Board 3 ERROR");
         }
         startcycle = 0;
       }

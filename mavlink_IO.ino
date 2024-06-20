@@ -39,17 +39,17 @@ void MavLink_RC() {
             mavlink_heartbeat_t hb;
             mavlink_msg_heartbeat_decode(&msg, &hb);
 
-            Serial.print("\nFlight Mode: ");
-            Serial.println(hb.custom_mode);
-            
+            //Serial.print("\nFlight Mode: ");
+            //Serial.println(hb.custom_mode);
+
             //  Serial.print("Type: ");
             //  Serial.println(hb.type);
             //  Serial.print("Autopilot: ");
             //  Serial.println(hb.autopilot);
             //   Serial.print("Base Mode: ");
             //   Serial.println(hb.base_mode);
-             Serial.print("System Status: ");
-             Serial.println(hb.system_status);
+            //  Serial.print("System Status: ");
+            // Serial.println(hb.system_status);
             //   Serial.print("Mavlink Version: ");
             //   Serial.println(hb.mavlink_version);
             //    Serial.println();
@@ -59,12 +59,13 @@ void MavLink_RC() {
           {
             mavlink_servo_output_raw_t SERVOCHANNEL;
             mavlink_msg_servo_output_raw_decode(&msg, &SERVOCHANNEL);
-            Serial.println(SERVOCHANNEL.servo1_raw);
             Serial.print("Chanel 1 (raw): ");
-            Serial.println(SERVOCHANNEL.servo2_raw);
+            Serial.println(SERVOCHANNEL.servo1_raw);
             Serial.print("Chanel 2 (raw): ");
-            rightoutput = map(SERVOCHANNEL.servo1_raw, 1000, 2000, -MAXRPM, MAXRPM);
-            leftoutput = map(SERVOCHANNEL.servo2_raw, 1000, 2000, -MAXRPM, MAXRPM);
+            Serial.println(SERVOCHANNEL.servo2_raw);
+
+            leftoutput = map(SERVOCHANNEL.servo1_raw, 1000, 2000, -MAXRPM, MAXRPM);
+            rightoutput = map(SERVOCHANNEL.servo2_raw, 1000, 2000, -MAXRPM, MAXRPM);
             Send(leftoutput, rightoutput);
           }
       }
@@ -108,7 +109,7 @@ void Mavlink_Telemetry1() {
 
 
   name = "VOLT1";
-  value = (VOLT1/100);
+  value = (VOLT1 / 100);
   mavlink_msg_named_value_float_pack(1, 2, &msg, time_boot_ms, name, value);
   len = mavlink_msg_to_send_buffer(buf, &msg);
   Serial1.write(buf, len);
@@ -116,12 +117,10 @@ void Mavlink_Telemetry1() {
 
 
   name = "TEMP1";
-  value = (TEMP1/10);
+  value = (TEMP1 / 10);
   mavlink_msg_named_value_float_pack(1, 2, &msg, time_boot_ms, name, value);
   len = mavlink_msg_to_send_buffer(buf, &msg);
   Serial1.write(buf, len);
-
-
 }
 
 
@@ -159,7 +158,7 @@ void Mavlink_Telemetry2() {
 
 
   name = "VOLT2";
-  value = (VOLT2/100);
+  value = (VOLT2 / 100);
   mavlink_msg_named_value_float_pack(1, 2, &msg, time_boot_ms, name, value);
   len = mavlink_msg_to_send_buffer(buf, &msg);
   Serial1.write(buf, len);
@@ -167,12 +166,10 @@ void Mavlink_Telemetry2() {
 
 
   name = "TEMP2";
-  value = (TEMP2/10);
+  value = (TEMP2 / 10);
   mavlink_msg_named_value_float_pack(1, 2, &msg, time_boot_ms, name, value);
   len = mavlink_msg_to_send_buffer(buf, &msg);
   Serial1.write(buf, len);
-
-
 }
 
 
@@ -210,7 +207,7 @@ void Mavlink_Telemetry3() {
 
 
   name = "VOLT3";
-  value = (VOLT3/100);
+  value = (VOLT3 / 100);
   mavlink_msg_named_value_float_pack(1, 2, &msg, time_boot_ms, name, value);
   len = mavlink_msg_to_send_buffer(buf, &msg);
   Serial1.write(buf, len);
@@ -218,17 +215,8 @@ void Mavlink_Telemetry3() {
 
 
   name = "TEMP3";
-  value = (TEMP3/10);
+  value = (TEMP3 / 10);
   mavlink_msg_named_value_float_pack(1, 2, &msg, time_boot_ms, name, value);
   len = mavlink_msg_to_send_buffer(buf, &msg);
   Serial1.write(buf, len);
-
-
 }
-
-
-
-
-
-
-
