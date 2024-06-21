@@ -30,8 +30,6 @@ void MavLink_RC() {
 
     //Get new message
     if (mavlink_parse_char(MAVLINK_COMM_0, c, &msg, &status)) {
-
-      //Handle new message from autopilot
       switch (msg.msgid) {
         case MAVLINK_MSG_ID_HEARTBEAT:  // #0: Heartbeat
           {
@@ -72,8 +70,21 @@ void MavLink_RC() {
     }
   }
 }
+void MAVLINK_HB() {
 
+    uint8_t autopilot_type = MAV_AUTOPILOT_INVALID;
+    uint8_t system_mode = MAV_MODE_PREFLIGHT;  ///< Booting up
+    uint32_t custom_mode = 30;                 ///< Custom mode, can be defined by user/adopter
+    uint8_t system_state = MAV_STATE_STANDBY;  ///< System ready for flight
+    mavlink_message_t msg;
+    uint8_t buf[MAVLINK_MAX_PACKET_LEN];
+    int type = MAV_TYPE_GROUND_ROVER;
+    // Pack the message
 
+    mavlink_msg_heartbeat_pack(10, 140, &msg, type, autopilot_type, system_mode, custom_mode, system_state);
+    uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
+    Serial1.write(buf, len);
+  }
 
 
 void Mavlink_Telemetry1() {
