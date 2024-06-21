@@ -2,33 +2,33 @@
 #include "mavlink/common/mavlink.h"
 #include "mavlink/common/mavlink_msg_servo_output_raw.h"
 
-SerialPIO HoverSerial1(2,3);
-SerialPIO HoverSerial2(4,5);
-SerialPIO HoverSerial3(6,7);
+SerialPIO HoverSerial1(2, 3);
+SerialPIO HoverSerial2(4, 5);
+SerialPIO HoverSerial3(6, 7);
 //SerialPIO ser6(10,11);
 
 
-int MAXRPM = 100;
+int MAXRPM = 200;
 
 
-const int board1power = 8;  
-const int board2power = 9;    
-const int board3power = 10;  
+const int board1power = 8;
+const int board2power = 9;
+const int board3power = 10;
 
-const int board1switch = 11;    
-const int board2switch = 12; 
-const int board3switch = 13;   
+const int board1switch = 11;
+const int board2switch = 12;
+const int board3switch = 13;
 
 
 
 #define START_FRAME 0xABCD  // [-] Start frme definition for reliable serial communication
 //#define DEBUG_RX            // [-] Debug received data. Prints all bytes to serial (comment-out to disable)
 
-int leftoutput = 10;
-int rightoutput = 10;
-//low voltage 
+int leftoutput = 0;
+int rightoutput = 0;
+//low voltage
 //speed limit
-//power control 
+//power control
 
 int boardson = 0;
 int board1on = 0;
@@ -43,14 +43,14 @@ int startupok = 0;
 int startcycle = 0;
 int stopcycle = 0;
 
-unsigned long buttonMillis = 0; 
-unsigned long checkMillis = 0; 
+unsigned long buttonMillis = 0;
+unsigned long checkMillis = 0;
 
 const long buttoninterval = 2000;  // time to hold power switch
-const long boardinterval = 4000;  // time to hold power switch
+const long boardinterval = 4000;   // time to hold power switch
 
 unsigned long previousMillis = 0;  // will store last time LED was updated
-const long telem = 1000; 
+const long telem = 1000;
 
 int THRR1;
 int THRL1;
@@ -119,9 +119,9 @@ void setup() {
   HoverSerial3.begin(115200);
   //ser6.begin(115200);
 
-  pinMode(board1power,  INPUT);
-  pinMode(board2power,  INPUT);
-  pinMode(board3power,  INPUT);
+  pinMode(board1power, INPUT);
+  pinMode(board2power, INPUT);
+  pinMode(board3power, INPUT);
 
   pinMode(board1switch, OUTPUT);
   pinMode(board2switch, OUTPUT);
@@ -142,18 +142,19 @@ void loop() {
   Receive1();
   Receive2();
   //Receive3();
+  //Send(10, 10);
 
-unsigned long currentMillis = millis();
+
+  unsigned long currentMillis = millis();
 
   if (currentMillis - previousMillis >= telem) {
     // save the last time you blinked the LED
     previousMillis = currentMillis;
-  Mavlink_Telemetry1();  
-  Mavlink_Telemetry2(); 
-  //Mavlink_Telemetry3(); 
+    Mavlink_Telemetry1();
+    Mavlink_Telemetry2();
+    //Mavlink_Telemetry3();
+    MAVLINK_HB();
   }
   //powercycleon();
   //powercycleoff();
-
-
 }
