@@ -62,9 +62,17 @@ void MavLink_RC() {
             Serial.print("Chanel 2 (raw): ");
             Serial.println(SERVOCHANNEL.servo2_raw);
 
-            leftoutput = map(SERVOCHANNEL.servo1_raw, 1000, 2000, -MAXRPM, MAXRPM);
-            rightoutput = map(SERVOCHANNEL.servo2_raw, 1000, 2000, -MAXRPM, MAXRPM);
-            Send(leftoutput, rightoutput);
+            leftoutput1  = map(SERVOCHANNEL.servo15_raw, 1000, 2000, -MAXRPM, MAXRPM);
+            rightoutput1 = map(SERVOCHANNEL.servo16_raw, 1000, 2000, -MAXRPM, MAXRPM);
+            leftoutput2  = map(SERVOCHANNEL.servo15_raw, 1000, 2000, -MAXRPM, MAXRPM);
+            rightoutput2 = map(SERVOCHANNEL.servo16_raw, 1000, 2000, -MAXRPM, MAXRPM);
+            leftoutput3  = map(SERVOCHANNEL.servo15_raw, 1000, 2000, -MAXRPM, MAXRPM);
+            rightoutput3 = map(SERVOCHANNEL.servo16_raw, 1000, 2000, -MAXRPM, MAXRPM);
+            MAXRPM       = map(SERVOCHANNEL.servo14_raw, 1000, 2000, 10, 300);
+
+            Send1(leftoutput1, rightoutput1);
+            Send2(leftoutput2, rightoutput2);
+            Send3(leftoutput3, rightoutput3);
           }
       }
     }
@@ -72,19 +80,19 @@ void MavLink_RC() {
 }
 void MAVLINK_HB() {
 
-    uint8_t autopilot_type = MAV_AUTOPILOT_INVALID;
-    uint8_t system_mode = MAV_MODE_PREFLIGHT;  ///< Booting up
-    uint32_t custom_mode = 30;                 ///< Custom mode, can be defined by user/adopter
-    uint8_t system_state = MAV_STATE_STANDBY;  ///< System ready for flight
-    mavlink_message_t msg;
-    uint8_t buf[MAVLINK_MAX_PACKET_LEN];
-    int type = MAV_TYPE_GROUND_ROVER;
-    // Pack the message
+  uint8_t autopilot_type = MAV_AUTOPILOT_INVALID;
+  uint8_t system_mode = MAV_MODE_PREFLIGHT;  ///< Booting up
+  uint32_t custom_mode = 30;                 ///< Custom mode, can be defined by user/adopter
+  uint8_t system_state = MAV_STATE_STANDBY;  ///< System ready for flight
+  mavlink_message_t msg;
+  uint8_t buf[MAVLINK_MAX_PACKET_LEN];
+  int type = MAV_TYPE_GROUND_ROVER;
+  // Pack the message
 
-    mavlink_msg_heartbeat_pack(10, 140, &msg, type, autopilot_type, system_mode, custom_mode, system_state);
-    uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
-    Serial1.write(buf, len);
-  }
+  mavlink_msg_heartbeat_pack(10, 140, &msg, type, autopilot_type, system_mode, custom_mode, system_state);
+  uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
+  Serial1.write(buf, len);
+}
 
 
 void Mavlink_Telemetry1() {
