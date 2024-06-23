@@ -8,11 +8,11 @@ SerialPIO HoverSerial3(6, 7);
 //SerialPIO ser6(10,11);
 
 
-#include <NeoPixelConnect.h>
-NeoPixelConnect pix(16, 1, pio0, 0);
+
 
 int MAXRPM = 200;
 
+int powerchannel = 1000;
 
 const int board1power = 8;
 const int board2power = 9;
@@ -137,7 +137,10 @@ void setup() {
   pinMode(board2switch, OUTPUT);
   pinMode(board3switch, OUTPUT);
 
-   pix.neoPixelFill(255, 0, 0, true);
+  digitalWrite(board1switch, LOW);
+  digitalWrite(board2switch, LOW);
+  digitalWrite(board3switch, LOW);
+
   request_Mavlink();
 }
 
@@ -152,7 +155,31 @@ void loop() {
   Receive1();
   Receive2();
   Receive3();
-  //Send(10, 10);
+
+
+
+  if (powerchannel > 1800) {
+    
+      if (digitalRead(board1power)) digitalWrite(board1switch, HIGH);
+      if (digitalRead(board2power)) digitalWrite(board2switch, HIGH);
+      if (digitalRead(board3power)) digitalWrite(board3switch, HIGH);
+    //Serial.println("HIGH");
+  } else {
+    digitalWrite(board1switch, LOW);
+    digitalWrite(board2switch, LOW);
+    digitalWrite(board3switch, LOW);
+    // Serial.println("LOW");
+  }
+
+
+  if (powerchannel < 1300) {
+      if (!digitalRead(board1power)) digitalWrite(board1switch, HIGH);
+      if (!digitalRead(board2power)) digitalWrite(board2switch, HIGH);
+      if (!digitalRead(board3power)) digitalWrite(board3switch, HIGH);
+    //Serial.println("HIGH");
+  } 
+
+
 
 
   unsigned long currentMillis = millis();
@@ -160,16 +187,33 @@ void loop() {
   if (currentMillis - previousMillis >= telem) {
     // save the last time you blinked the LED
     previousMillis = currentMillis;
-    Mavlink_Telemetry1();
-    Mavlink_Telemetry2();
-    Mavlink_Telemetry3();
-    //MAVLINK_HB();
-      
+    if (digitalRead(board1power)) Mavlink_Telemetry1();
+    if (digitalRead(board2power)) Mavlink_Telemetry2();
+    if (digitalRead(board3power)) Mavlink_Telemetry3();
+
+
+    if (digitalRead(board1switch)) Serial.println("1+");
+    if (digitalRead(board2switch)) Serial.println("2+");
+    if (digitalRead(board3switch)) Serial.println("3+");
+
+    if (digitalRead(board1power)) Serial.println("1");
+    if (digitalRead(board2power)) Serial.println("2");
+    if (digitalRead(board3power)) Serial.println("3");
+    Serial.println("             ");
   }
+
+
+
+
   //powercycleon();
   //powercycleoff();
+
+
+  /*TESTING
+  Send1(10, 10);
+    Send2(10, 10);
+      Send3(10, 10);
+         MAVLINK_HB();
+delay (100);
+*/
 }
-
-
-
-
