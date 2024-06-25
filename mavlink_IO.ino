@@ -61,7 +61,7 @@ void MavLink_RC() {
            // Serial.println(SERVOCHANNEL.servo1_raw);
             //Serial.print("Chanel 2 (raw): ");
             //Serial.println(SERVOCHANNEL.servo2_raw);
-            //MAXRPM = map(SERVOCHANNEL.servo14_raw, 1000, 2000, 50, 300);
+           // MAXRPM = map(SERVOCHANNEL.servo14_raw, 1000, 2000, 100, 300);
             leftoutput1 = map(SERVOCHANNEL.servo15_raw, 1000, 2000, -MAXRPM, MAXRPM);
             rightoutput1 = map(SERVOCHANNEL.servo16_raw, 1000, 2000, -MAXRPM, MAXRPM);
             leftoutput2 = map(SERVOCHANNEL.servo15_raw, 1000, 2000, -MAXRPM, MAXRPM);
