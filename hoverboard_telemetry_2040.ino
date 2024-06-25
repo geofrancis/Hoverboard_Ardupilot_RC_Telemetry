@@ -47,10 +47,15 @@ int board2error = 0;
 int board3error = 0;
 
 int startupok = 0;
-int startcycle = 0;
+int startcycle1 = 0;
+int startcycle2 = 0;
+int startcycle3 = 0;
 int stopcycle = 0;
 
 unsigned long buttonMillis = 0;
+unsigned long current_motor_esc_Millis = 0;
+
+unsigned long previous_motor_esc_Millis = 0;
 
 unsigned long checkMillis = 10000;
 unsigned long check2Millis = 10000;
@@ -140,7 +145,7 @@ void setup() {
   digitalWrite(board1switch, LOW);
   digitalWrite(board2switch, LOW);
   digitalWrite(board3switch, LOW);
-
+delay(10000);
   request_Mavlink();
 }
 
@@ -155,30 +160,7 @@ void loop() {
   Receive1();
   Receive2();
   Receive3();
-
-
-
-  if (powerchannel > 1800) {
-    
-      if (digitalRead(board1power)) digitalWrite(board1switch, HIGH);
-      if (digitalRead(board2power)) digitalWrite(board2switch, HIGH);
-      if (digitalRead(board3power)) digitalWrite(board3switch, HIGH);
-    //Serial.println("HIGH");
-  } else {
-    digitalWrite(board1switch, LOW);
-    digitalWrite(board2switch, LOW);
-    digitalWrite(board3switch, LOW);
-    // Serial.println("LOW");
-  }
-
-
-  if (powerchannel < 1300) {
-      if (!digitalRead(board1power)) digitalWrite(board1switch, HIGH);
-      if (!digitalRead(board2power)) digitalWrite(board2switch, HIGH);
-      if (!digitalRead(board3power)) digitalWrite(board3switch, HIGH);
-    //Serial.println("HIGH");
-  } 
-
+  power();
 
 
 
@@ -191,7 +173,7 @@ void loop() {
     if (digitalRead(board2power)) Mavlink_Telemetry2();
     if (digitalRead(board3power)) Mavlink_Telemetry3();
 
-
+/*
     if (digitalRead(board1switch)) Serial.println("1+");
     if (digitalRead(board2switch)) Serial.println("2+");
     if (digitalRead(board3switch)) Serial.println("3+");
@@ -200,6 +182,7 @@ void loop() {
     if (digitalRead(board2power)) Serial.println("2");
     if (digitalRead(board3power)) Serial.println("3");
     Serial.println("             ");
+    */
   }
 
 
