@@ -220,3 +220,35 @@ delay (100);
 
   request_Mavlink();
 }
+
+
+
+void mavlink_send_battery_status(mavlink_battery_status_t battery_status)
+{
+  uint8_t system_id = 255; // id of computer which is sending the command (ground control software has id of 255)
+  uint8_t component_id = 2;
+  mavlink_message_t msg;
+  uint8_t id=battery_status.id;
+  uint8_t battery_function=battery_status.battery_function;
+  uint8_t type=battery_status.type;
+  int16_t temperature=battery_status.temperature;
+  uint16_t* voltages=battery_status.voltages;
+  int16_t current_battery=battery_status.current_battery;
+  int32_t current_consumed=battery_status.current_consumed;
+  int32_t energy_consumed=battery_status.energy_consumed;
+  int8_t battery_remaining=50;
+  int32_t time_remaining=battery_status.time_remaining;
+  uint8_t charge_state=battery_status.charge_state;
+  uint16_t* voltages_ext=battery_status.voltages_ext;
+  uint8_t mode=battery_status.mode;
+  uint32_t fault_bitmask=battery_status.fault_bitmask;
+
+
+  //Pack battery message
+  uint8_t buf[MAVLINK_MAX_PACKET_LEN];
+  mavlink_msg_battery_status_pack(system_id,component_id,&msg,id,battery_function,type,temperature,voltages,current_battery,current_consumed,energy_consumed,battery_remaining,time_remaining,charge_state,voltages_ext,mode,fault_bitmask);
+  uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);  // Send the message (.write sends as bytes)
+ 
+  Serial1.write(buf, len); //Write data to serial port
+  
+}
