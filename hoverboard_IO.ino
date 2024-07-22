@@ -1,19 +1,23 @@
 
 
 void power() {
-
-  if (powerchannel > 1800) {
-    brdall = 1;
+ brdall = digitalRead(14);
+  if (brdall == 1) {
+    Serial.print(" mainswitch on ");
+  Serial.print(mainswitch);
   }
 
-  if (powerchannel < 1300) {
-    brdall = 0;
+  if (brdall == 0) {
+  Serial.print(" mainswitch off ");
+  Serial.print(mainswitch);
   }
-
+  
+  Serial.print(" brdall ");
+  Serial.print(brdall);
   Serial.println(brdallc);
-  int brd1 = digitalRead(8);
-  int brd2 = digitalRead(9);
-  int brd3 = digitalRead(10);
+  brd1 = digitalRead(8);
+  brd2 = digitalRead(9);
+  brd3 = digitalRead(10);
   Serial.print(" brd1 ");
   Serial.print(brd1);
   Serial.print(" brd1 ");
