@@ -2,7 +2,7 @@ Hoverboard ESC manager,
  control and telemetry via mavlink for multiple hoverboard controllers using a RP-2040.    
 
 working:    
-map left and right hoverboard channels to servo outputs 1 and 2.     
+map left and right hoverboard channels to servo outputs 15 and 16.
 send telemetry from up to 3 hoverboards to ardupilot as named floats. 
 
 power management, switch boards off and on to save power.        
