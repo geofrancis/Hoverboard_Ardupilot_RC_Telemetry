@@ -1,5 +1,5 @@
 Hoverboard ESC manager,    
- control and telemetry via mavlink for multiple hoverboard controllers
+ control and telemetry via mavlink for multiple hoverboard controllers using a RP-2040.    
 
 working:    
 map left and right hoverboard channels to servo outputs 1 and 2.     
