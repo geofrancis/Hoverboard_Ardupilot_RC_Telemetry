@@ -11,7 +11,6 @@ still to do
 tilt detection, read imu data and stop motors if tilt or roll exceeds a set limit.     
 configure with parameters via mission planner. 
 
-![hoverboard wiring](https://github.com/user-attachments/assets/13257316-739d-4160-a126-009862423986)
 
 ![Screenshot 2024-06-20 064302](https://github.com/geofrancis/Hoverboard_MAVLINK_RC_Telemetry/assets/5570278/07d68d38-3a74-4209-8ff4-57d675d888be)
 
