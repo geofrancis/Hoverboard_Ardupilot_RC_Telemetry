@@ -73,12 +73,12 @@ void power() {
   if (brdall == 1) {
     Serial.println("TEST1");
     if (brdallc == 1) {
-  
+      Serial.println("TEST2");
       if (!digitalRead(board1power)) digitalWrite(board1switch, HIGH);
       if (!digitalRead(board2power)) digitalWrite(board2switch, HIGH);
       if (!digitalRead(board3power)) digitalWrite(board3switch, HIGH);
       delay(2000);
-      Serial.println("TEST6");
+      Serial.println("TEST3");
       digitalWrite(board1switch, LOW);
       digitalWrite(board2switch, LOW);
       digitalWrite(board3switch, LOW);
@@ -92,39 +92,39 @@ void power() {
 
 
 
-if (brdall == 0) {
+  if (brdall == 0) {
 
-  if (brdalld == 1) {
-    if (brd1 == 0) {
-      digitalWrite(board1switch, LOW);
-    }
-    if (brd1 == 1) {
-      digitalWrite(board1switch, HIGH);
-    }
-    if (brd2 == 0) {
-      digitalWrite(board2switch, LOW);
-      if (brd3 == 1) {
-        digitalWrite(board2switch, HIGH);
-      }
-      if (brd3 == 0) {
-        digitalWrite(board3switch, LOW);
-        if (brd3 == 1) {
-          digitalWrite(board3switch, HIGH);
-        }
-        delay(1000);
+    if (brdalld == 1) {
+      if (brd1 == 0) {
         digitalWrite(board1switch, LOW);
+      }
+      if (brd1 == 1) {
+        digitalWrite(board1switch, HIGH);
+      }
+      if (brd2 == 0) {
         digitalWrite(board2switch, LOW);
-        digitalWrite(board3switch, LOW);
-        Serial.println("LOW");
-        brdalld = (brdalld + 1);
-        if (brdalld > 1) {
-          brdalld = 1;
-          brdallc = 1;
+        if (brd3 == 1) {
+          digitalWrite(board2switch, HIGH);
+        }
+        if (brd3 == 0) {
+          digitalWrite(board3switch, LOW);
+          if (brd3 == 1) {
+            digitalWrite(board3switch, HIGH);
+          }
+          delay(1000);
+          digitalWrite(board1switch, LOW);
+          digitalWrite(board2switch, LOW);
+          digitalWrite(board3switch, LOW);
+          Serial.println("LOW");
+          brdalld = (brdalld + 1);
+          if (brdalld > 1) {
+            brdalld = 1;
+            brdallc = 1;
+          }
         }
       }
     }
   }
-}
 }
 
 
@@ -187,7 +187,7 @@ void Receive1() {
       RPML1 = (Feedback.speedL_meas);
       VOLT1 = (Feedback.batVoltage);
       TEMP1 = (Feedback.boardTemp);
-     /// Serial.println("ESC 1 Telem");
+      /// Serial.println("ESC 1 Telem");
 
     } else {
       // Serial.println("Non-valid data skipped");
@@ -249,7 +249,7 @@ void Receive2() {
       //   Serial.println(VOLT2);
 
       // Print data to built-in Serial
-    //  Serial.println("ESC 2 Telem");
+      //  Serial.println("ESC 2 Telem");
     } else {
       //  Serial.println("Non-valid data skipped");
     }
@@ -304,7 +304,7 @@ void Receive3() {
       TEMP3 = (Feedback.boardTemp);
       //    Serial.println("VOLT3 ");
       //   Serial.println(VOLT3);
-     // Serial.println("ESC 3 Telem");
+      // Serial.println("ESC 3 Telem");
     } else {
       //Serial.println("Non-valid data skipped");
     }
