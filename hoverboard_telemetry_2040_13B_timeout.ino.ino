@@ -5,7 +5,7 @@
 SerialPIO HoverSerial1(2, 3);
 SerialPIO HoverSerial2(4, 5);
 SerialPIO HoverSerial3(6, 7);
-SerialPIO BMS(10, 11);
+SerialPIO HoverSerial4(10, 11);
 
 int brd1 = 0;
 int brd2 = 0;
@@ -137,7 +137,7 @@ typedef struct {
 SerialFeedback Feedback;
 SerialFeedback NewFeedback;
 
-
+int DI1O = 0;
 
 // Variables
 String inString = "";  // string to hold input
@@ -204,11 +204,11 @@ void setup() {
   if (digitalRead(board1power)) digitalWrite(board1switch, HIGH);
   if (digitalRead(board2power)) digitalWrite(board2switch, HIGH);
   if (digitalRead(board3power)) digitalWrite(board3switch, HIGH);
-  delay(2000);
+  delay(4000);
   digitalWrite(board1switch, LOW);
   digitalWrite(board2switch, LOW);
   digitalWrite(board3switch, LOW);
-  
+  delay(4000);
 }
 
 
@@ -218,41 +218,57 @@ void setup() {
 
 void loop() {
 
-  //  Serial.print(" loop------------------------------------------------------------------------------------");
+  // Serial.prinlnt(" loop------------------------------------------------------------------------------------");
   MavLink_RC();
   Receive1();
   Receive2();
   Receive3();
 
   // RTK();
-
-
   unsigned long currentMillis = millis();
 
   if (currentMillis - previousMillis >= telem) {
-     //  Serial.print(" loop111------------------------------------------------------------------------------------");
+  //    Serial.println(" loop111------------------------------------------------------------------------------------");
     previousMillis = currentMillis;
     MAVLINK_HB();
     MAVLINK_HB1();
     MAVLINK_HB2();
     MAVLINK_HB3();
-   
+    Serial.print(DI1O);
+    if (DI1O == 1) { power(); }
+    if (DI1O == 2) {Mavlink_Telemetry1(); }
+    if (DI1O == 3) {Mavlink_Telemetry2(); }
+    if (DI1O == 4) {Mavlink_Telemetry3(); }
+    if (DI1O == 5) { FCHBC(); }
+    DI1O++;
+    if (DI1O > 6) { DI1O = 1; }
   }
+}
+/*
 
-  unsigned long currentMillis2 = millis();
-  if (currentMillis2 - previousMillis2 >= telem2) {
+
+ Serial.print(" loop111------------------------------------------------------------------------------------");
+  previousMillis = currentMillis;
+  MAVLINK_HB();
+  MAVLINK_HB1();
+  MAVLINK_HB2();
+  MAVLINK_HB3();
+}
+
+unsigned long currentMillis2 = millis();
+if (currentMillis2 - previousMillis2 >= telem2) {
   //  Serial.print(" loop2222------------------------------------------------------------------------------------");
-    previousMillis2 = currentMillis2;
-    if (brd1 == 1) { Mavlink_Telemetry1(); }
-    if (brd2 == 1) { Mavlink_Telemetry2(); }
-    if (brd3 == 1) { Mavlink_Telemetry3(); }
-    power();
-    FCHBC();
-  }
+  previousMillis2 = currentMillis2;
+  if (VOLT1 > 1) { Mavlink_Telemetry1(); }
+  if (VOLT2 > 1) { Mavlink_Telemetry2(); }
+  if (VOLT3 > 1) { Mavlink_Telemetry3(); }
+  power();
+  FCHBC();
+}
 }
 
 
-
+*/
 
 void RTK() {
 
