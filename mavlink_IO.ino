@@ -80,30 +80,30 @@ void MavLink_RC() {
 
 
 void FCHBC() {
-  //Serial.print("FCHB ");
-  //Serial.println(FCHB);
+  Serial.print("FCHB ");
+ // Serial.println(FCHB);
   if (FCHB == 0) {
     Serial.print("NO FLIGHT CONTROLLER ");
     Serial.println(FCOK);
     Serial.println(FCHB);
     FCOK = 0;
-    if (FCHB > 1) {
-      Serial.print("Rover ");
-      Serial.println(FCOK);
-      Serial.print(FCHB);
-      Serial.println("Beats ");
-      FCHB = 0;
-      FCOK = 1;
-    }
+  }
+  if (FCHB > 1) {
+    Serial.print("Rover ");
+    Serial.println(FCOK);
+    Serial.print(FCHB);
+    Serial.println("Beats ");
+    FCHB = 0;
+    FCOK = 1;
   }
 }
+
 
 
 
 void HBWATCH() {
   FCHB++;
   //Serial.print("tick");
-
 }
 
 
@@ -124,7 +124,7 @@ void MAVLINK_HB() {
 
 
 void MAVLINK_HB1() {
-  if (brd1 == 1) {
+  if (brd1==1) {
     uint8_t autopilot_type = MAV_AUTOPILOT_INVALID;
     uint8_t system_mode = MAV_MODE_PREFLIGHT;  ///< Booting up
     uint32_t custom_mode = 1;                  ///< Custom mode, can be defined by user/adopter
@@ -133,7 +133,7 @@ void MAVLINK_HB1() {
     uint8_t buf[MAVLINK_MAX_PACKET_LEN];
     int type = MAV_TYPE_SERVO;
     // Pack the message
-    Serial.print("mavhb1");
+    // Serial.print("mavhb1");
     mavlink_msg_heartbeat_pack(1, 140, &msg, type, autopilot_type, system_mode, custom_mode, system_state);
     uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
     Serial1.write(buf, len);
@@ -141,7 +141,7 @@ void MAVLINK_HB1() {
 }
 
 void MAVLINK_HB2() {
-  if (brd2 == 1) {
+  if (brd2==1) {
     uint8_t autopilot_type = MAV_AUTOPILOT_INVALID;
     uint8_t system_mode = MAV_MODE_PREFLIGHT;  ///< Booting up
     uint32_t custom_mode = 2;                  ///< Custom mode, can be defined by user/adopter
@@ -150,7 +150,7 @@ void MAVLINK_HB2() {
     uint8_t buf[MAVLINK_MAX_PACKET_LEN];
     int type = MAV_TYPE_SERVO;
     // Pack the message
-    Serial.print("mavhb2");
+    // Serial.print("mavhb2");
     mavlink_msg_heartbeat_pack(1, 141, &msg, type, autopilot_type, system_mode, custom_mode, system_state);
     uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
     Serial1.write(buf, len);
@@ -158,7 +158,7 @@ void MAVLINK_HB2() {
 }
 
 void MAVLINK_HB3() {
-  if (brd3 == 1) {
+   if (brd3==1) {
     uint8_t autopilot_type = MAV_AUTOPILOT_INVALID;
     uint8_t system_mode = MAV_MODE_PREFLIGHT;  ///< Booting up
     uint32_t custom_mode = 3;                  ///< Custom mode, can be defined by user/adopter
@@ -167,7 +167,7 @@ void MAVLINK_HB3() {
     uint8_t buf[MAVLINK_MAX_PACKET_LEN];
     int type = MAV_TYPE_SERVO;
     // Pack the message
-   Serial.print("mavhb3");
+    // Serial.print("mavhb3");
     mavlink_msg_heartbeat_pack(1, 142, &msg, type, autopilot_type, system_mode, custom_mode, system_state);
     uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
     Serial1.write(buf, len);
@@ -175,6 +175,7 @@ void MAVLINK_HB3() {
 }
 
 void Mavlink_Telemetry1() {
+   if (VOLT1 >1) {
   mavlink_message_t msg;
   uint32_t time_boot_ms = millis();
   //Serial.print("mavT1");
@@ -211,7 +212,8 @@ void Mavlink_Telemetry1() {
   mavlink_msg_named_value_float_pack(1, 140, &msg, time_boot_ms, name, value);
   len = mavlink_msg_to_send_buffer(buf, &msg);
   Serial1.write(buf, len);
-
+  //Serial.print("V1: ");
+//Serial.println(VOLT1);
 
 
   name = "TEMP1";
@@ -220,13 +222,15 @@ void Mavlink_Telemetry1() {
   len = mavlink_msg_to_send_buffer(buf, &msg);
   Serial1.write(buf, len);
 }
+}
 
 
 
 void Mavlink_Telemetry2() {
+   if (VOLT2 >1) {
   mavlink_message_t msg;
   uint32_t time_boot_ms = millis();
-//  Serial.print("mavT2");
+  //Serial.print("mavT2");
   const char* name = "THRR2";
   float value = (THRR2);
   mavlink_msg_named_value_float_pack(1, 141, &msg, time_boot_ms, name, value);
@@ -260,7 +264,8 @@ void Mavlink_Telemetry2() {
   mavlink_msg_named_value_float_pack(1, 141, &msg, time_boot_ms, name, value);
   len = mavlink_msg_to_send_buffer(buf, &msg);
   Serial1.write(buf, len);
-
+ // Serial.print("V2: ");
+//Serial.println(VOLT2);
 
 
   name = "TEMP2";
@@ -269,13 +274,14 @@ void Mavlink_Telemetry2() {
   len = mavlink_msg_to_send_buffer(buf, &msg);
   Serial1.write(buf, len);
 }
-
+}
 
 
 void Mavlink_Telemetry3() {
+   if (VOLT3 >1) {
   mavlink_message_t msg;
   uint32_t time_boot_ms = millis();
-//  Serial.print("mavT3");
+  //Serial.print("mavT3");
   const char* name = "THRR3";
   float value = (THRR3);
   mavlink_msg_named_value_float_pack(1, 142, &msg, time_boot_ms, name, value);
@@ -309,7 +315,8 @@ void Mavlink_Telemetry3() {
   mavlink_msg_named_value_float_pack(1, 142, &msg, time_boot_ms, name, value);
   len = mavlink_msg_to_send_buffer(buf, &msg);
   Serial1.write(buf, len);
-
+ // Serial.print("V3: ");
+//Serial.println(VOLT3);
 
 
   name = "TEMP3";
@@ -317,6 +324,7 @@ void Mavlink_Telemetry3() {
   mavlink_msg_named_value_float_pack(1, 142, &msg, time_boot_ms, name, value);
   len = mavlink_msg_to_send_buffer(buf, &msg);
   Serial1.write(buf, len);
+}
 }
 
 
