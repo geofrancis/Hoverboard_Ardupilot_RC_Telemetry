@@ -2,7 +2,7 @@
 void request_Mavlink() {
   //Request Data from Pixhawk
   uint8_t _system_id = 255;       // id of computer which is sending the command (ground control software has id of 255)
-  uint8_t _component_id = 158;      // seems like it can be any # except the number of what Pixhawk sys_id is
+  uint8_t _component_id = 158;    // seems like it can be any # except the number of what Pixhawk sys_id is
   uint8_t _target_system = 1;     // Id # of Pixhawk (should be 1)
   uint8_t _target_component = 0;  // Target component, 0 = all (seems to work with 0 or 1
   uint8_t _req_stream_id = MAV_DATA_STREAM_ALL;
@@ -36,7 +36,7 @@ void MavLink_RC() {
 
             mavlink_heartbeat_t hb;
             mavlink_msg_heartbeat_decode(&msg, &hb);
-
+            HBWATCH();
             //Serial.print("\nFlight Mode: ");
             //Serial.println(hb.custom_mode);
 
@@ -57,101 +57,127 @@ void MavLink_RC() {
           {
             mavlink_servo_output_raw_t SERVOCHANNEL;
             mavlink_msg_servo_output_raw_decode(&msg, &SERVOCHANNEL);
-           // Serial.print("Chanel 1 (raw): ");
-           // Serial.println(SERVOCHANNEL.servo1_raw);
-            Serial.print("Chanel 13 (raw): ");
-            Serial.println(SERVOCHANNEL.servo13_raw);
-           // MAXRPM = map(SERVOCHANNEL.servo14_raw, 1000, 2000, 100, 300);
-            leftoutput1 = map(SERVOCHANNEL.servo15_raw, 1000, 2000, -MAXRPM, MAXRPM);
-            rightoutput1 = map(SERVOCHANNEL.servo16_raw, 1000, 2000, -MAXRPM, MAXRPM);
-            leftoutput2 = map(SERVOCHANNEL.servo15_raw, 1000, 2000, -MAXRPM, MAXRPM);
-            rightoutput2 = map(SERVOCHANNEL.servo16_raw, 1000, 2000, -MAXRPM, MAXRPM);
-            leftoutput3 = map(SERVOCHANNEL.servo15_raw, 1000, 2000, -MAXRPM, MAXRPM);
-            rightoutput3 = map(SERVOCHANNEL.servo16_raw, 1000, 2000, -MAXRPM, MAXRPM);
+            // Serial.print("Chanel 1 (raw): ");
+            // Serial.println(SERVOCHANNEL.servo1_raw);
+            //Serial.print("Chanel 13 (raw): ");
+            //Serial.println(SERVOCHANNEL.servo13_raw);
+            // MAXRPM = map(SERVOCHANNEL.servo14_raw, 1000, 2000, 100, 300);
+            leftoutput = map(SERVOCHANNEL.servo15_raw, 1000, 2000, -MAXRPM, MAXRPM);
+            rightoutput = map(SERVOCHANNEL.servo16_raw, 1000, 2000, -MAXRPM, MAXRPM);
             powerchannel = (SERVOCHANNEL.servo13_raw);
             //Serial.println(powerchannel);
 
-            Send1(leftoutput1, rightoutput1);
-            Send2(leftoutput2, rightoutput2);
-            Send3(leftoutput3, rightoutput3);
+            SendTHR(leftoutput, rightoutput);
+            //Send2(leftoutput2, rightoutput2);
+            //Send3(leftoutput3, rightoutput3);
           }
+          break;
       }
     }
   }
 }
 
 
+
+void FCHBC() {
+  //Serial.print("FCHB ");
+  //Serial.println(FCHB);
+  if (FCHB == 0) {
+    Serial.print("NO FLIGHT CONTROLLER ");
+    Serial.println(FCOK);
+    Serial.println(FCHB);
+    FCOK = 0;
+    if (FCHB > 1) {
+      Serial.print("Rover ");
+      Serial.println(FCOK);
+      Serial.print(FCHB);
+      Serial.println("Beats ");
+      FCHB = 0;
+      FCOK = 1;
+    }
+  }
+}
+
+
+
+void HBWATCH() {
+  FCHB++;
+  //Serial.print("tick");
+
+}
+
+
 void MAVLINK_HB() {
-  uint8_t autopilot_type = MAV_AUTOPILOT_INVALID;
+  uint8_t autopilot_type = MAV_TYPE_ONBOARD_CONTROLLER;
   uint8_t system_mode = MAV_MODE_PREFLIGHT;  ///< Booting up
-  uint32_t custom_mode = 0;                 ///< Custom mode, can be defined by user/adopter
+  uint32_t custom_mode = 0;                  ///< Custom mode, can be defined by user/adopter
   uint8_t system_state = MAV_STATE_STANDBY;  ///< System ready for flight
   mavlink_message_t msg;
   uint8_t buf[MAVLINK_MAX_PACKET_LEN];
-  int type = MAV_TYPE_GROUND_ROVER;
+  int type = MAV_TYPE_SERVO;
   // Pack the message
-
+  //Serial.print("mavhb");
   mavlink_msg_heartbeat_pack(1, 158, &msg, type, autopilot_type, system_mode, custom_mode, system_state);
   uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
   Serial1.write(buf, len);
- }
+}
 
 
 void MAVLINK_HB1() {
- if (brd1 == 1) {
-  uint8_t autopilot_type = MAV_AUTOPILOT_INVALID;
-  uint8_t system_mode = MAV_MODE_PREFLIGHT;  ///< Booting up
-  uint32_t custom_mode = 0;                 ///< Custom mode, can be defined by user/adopter
-  uint8_t system_state = MAV_STATE_STANDBY;  ///< System ready for flight
-  mavlink_message_t msg;
-  uint8_t buf[MAVLINK_MAX_PACKET_LEN];
-  int type = MAV_TYPE_GROUND_ROVER;
-  // Pack the message
-
-  mavlink_msg_heartbeat_pack(1, 140, &msg, type, autopilot_type, system_mode, custom_mode, system_state);
-  uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
-  Serial1.write(buf, len);
- }
+  if (brd1 == 1) {
+    uint8_t autopilot_type = MAV_AUTOPILOT_INVALID;
+    uint8_t system_mode = MAV_MODE_PREFLIGHT;  ///< Booting up
+    uint32_t custom_mode = 1;                  ///< Custom mode, can be defined by user/adopter
+    uint8_t system_state = MAV_STATE_STANDBY;  ///< System ready for flight
+    mavlink_message_t msg;
+    uint8_t buf[MAVLINK_MAX_PACKET_LEN];
+    int type = MAV_TYPE_SERVO;
+    // Pack the message
+    Serial.print("mavhb1");
+    mavlink_msg_heartbeat_pack(1, 140, &msg, type, autopilot_type, system_mode, custom_mode, system_state);
+    uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
+    Serial1.write(buf, len);
+  }
 }
 
 void MAVLINK_HB2() {
- if (brd2 == 1) {
-  uint8_t autopilot_type = MAV_AUTOPILOT_INVALID;
-  uint8_t system_mode = MAV_MODE_PREFLIGHT;  ///< Booting up
-  uint32_t custom_mode = 0;                 ///< Custom mode, can be defined by user/adopter
-  uint8_t system_state = MAV_STATE_STANDBY;  ///< System ready for flight
-  mavlink_message_t msg;
-  uint8_t buf[MAVLINK_MAX_PACKET_LEN];
-  int type = MAV_TYPE_GROUND_ROVER;
-  // Pack the message
-
-  mavlink_msg_heartbeat_pack(1, 141, &msg, type, autopilot_type, system_mode, custom_mode, system_state);
-  uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
-  Serial1.write(buf, len);
-}
+  if (brd2 == 1) {
+    uint8_t autopilot_type = MAV_AUTOPILOT_INVALID;
+    uint8_t system_mode = MAV_MODE_PREFLIGHT;  ///< Booting up
+    uint32_t custom_mode = 2;                  ///< Custom mode, can be defined by user/adopter
+    uint8_t system_state = MAV_STATE_STANDBY;  ///< System ready for flight
+    mavlink_message_t msg;
+    uint8_t buf[MAVLINK_MAX_PACKET_LEN];
+    int type = MAV_TYPE_SERVO;
+    // Pack the message
+    Serial.print("mavhb2");
+    mavlink_msg_heartbeat_pack(1, 141, &msg, type, autopilot_type, system_mode, custom_mode, system_state);
+    uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
+    Serial1.write(buf, len);
+  }
 }
 
 void MAVLINK_HB3() {
- if (brd3 == 1) {
-  uint8_t autopilot_type = MAV_AUTOPILOT_INVALID;
-  uint8_t system_mode = MAV_MODE_PREFLIGHT;  ///< Booting up
-  uint32_t custom_mode = 0;                 ///< Custom mode, can be defined by user/adopter
-  uint8_t system_state = MAV_STATE_STANDBY;  ///< System ready for flight
-  mavlink_message_t msg;
-  uint8_t buf[MAVLINK_MAX_PACKET_LEN];
-  int type = MAV_TYPE_GROUND_ROVER;
-  // Pack the message
-
-  mavlink_msg_heartbeat_pack(1, 142, &msg, type, autopilot_type, system_mode, custom_mode, system_state);
-  uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
-  Serial1.write(buf, len);
-}
+  if (brd3 == 1) {
+    uint8_t autopilot_type = MAV_AUTOPILOT_INVALID;
+    uint8_t system_mode = MAV_MODE_PREFLIGHT;  ///< Booting up
+    uint32_t custom_mode = 3;                  ///< Custom mode, can be defined by user/adopter
+    uint8_t system_state = MAV_STATE_STANDBY;  ///< System ready for flight
+    mavlink_message_t msg;
+    uint8_t buf[MAVLINK_MAX_PACKET_LEN];
+    int type = MAV_TYPE_SERVO;
+    // Pack the message
+   Serial.print("mavhb3");
+    mavlink_msg_heartbeat_pack(1, 142, &msg, type, autopilot_type, system_mode, custom_mode, system_state);
+    uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
+    Serial1.write(buf, len);
+  }
 }
 
 void Mavlink_Telemetry1() {
   mavlink_message_t msg;
   uint32_t time_boot_ms = millis();
-
+  //Serial.print("mavT1");
   const char* name = "THRR1";
   float value = (THRR1);
   mavlink_msg_named_value_float_pack(1, 140, &msg, time_boot_ms, name, value);
@@ -200,7 +226,7 @@ void Mavlink_Telemetry1() {
 void Mavlink_Telemetry2() {
   mavlink_message_t msg;
   uint32_t time_boot_ms = millis();
-
+//  Serial.print("mavT2");
   const char* name = "THRR2";
   float value = (THRR2);
   mavlink_msg_named_value_float_pack(1, 141, &msg, time_boot_ms, name, value);
@@ -249,7 +275,7 @@ void Mavlink_Telemetry2() {
 void Mavlink_Telemetry3() {
   mavlink_message_t msg;
   uint32_t time_boot_ms = millis();
-
+//  Serial.print("mavT3");
   const char* name = "THRR3";
   float value = (THRR3);
   mavlink_msg_named_value_float_pack(1, 142, &msg, time_boot_ms, name, value);
@@ -291,4 +317,56 @@ void Mavlink_Telemetry3() {
   mavlink_msg_named_value_float_pack(1, 142, &msg, time_boot_ms, name, value);
   len = mavlink_msg_to_send_buffer(buf, &msg);
   Serial1.write(buf, len);
+}
+
+
+
+void MAVBATTERY() {
+
+
+
+  long C1 = myCellVoltages[1];
+  long C2 = myCellVoltages[2];
+  long C3 = myCellVoltages[3];
+  long C4 = myCellVoltages[4];
+  long C5 = myCellVoltages[5];
+  long C6 = myCellVoltages[6];
+  long C7 = myCellVoltages[7];
+  long C8 = myCellVoltages[8];
+  long C9 = myCellVoltages[9];
+  long C10 = myCellVoltages[10];
+  long C11 = myCellVoltages[11];
+  long C12 = myCellVoltages[12];
+  long C13 = myCellVoltages[13];
+  long C14 = myCellVoltages[14];
+  uint16_t CELLSA[10] = { C1, C2, C3, C4, C5, C6, C7, C8, C9, C10 };
+  uint16_t CELLSB[4] = { C11, C12, C13, C14 };
+
+  uint8_t system_id = 1;  // id of computer which is sending the command (ground control software has id of 255)
+  uint8_t component_id = 180;
+  mavlink_message_t msg;
+  uint8_t id = 0;
+  uint8_t battery_function = 2;  //propulsioni
+  uint8_t type = 3;              //liion
+  int16_t temperature = Temp_probe_1f;
+  uint16_t* voltages = CELLSA;
+  int16_t current_battery = 99;
+  int32_t current_consumed = (20000 - RemainCapacityf);
+  int32_t energy_consumed = 10000;
+  int8_t battery_remaining = RSOC;
+  int32_t time_remaining = 0;
+  uint8_t charge_state = 1;
+  uint16_t* voltages_ext = CELLSB;
+  uint8_t mode = 0;
+  uint32_t fault_bitmask = 0;
+
+
+  //Pack battery message
+  uint8_t buf[MAVLINK_MAX_PACKET_LEN];
+  mavlink_msg_battery_status_pack(system_id, component_id, &msg, id, battery_function, type, temperature, voltages, current_battery, current_consumed, energy_consumed, battery_remaining, time_remaining, charge_state, voltages_ext, mode, fault_bitmask);
+  uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);  // Send the message (.write sends as bytes)
+
+  //if (CELLS[1] > 1) {
+  Serial1.write(buf, len);  //Write data to serial port
+  //}
 }

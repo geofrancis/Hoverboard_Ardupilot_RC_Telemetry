@@ -1,135 +1,146 @@
 
 
 void power() {
- brdall = digitalRead(14);
-  if (brdall == 1) {
-    Serial.print(" mainswitch on ");
-  Serial.print(mainswitch);
-  }
 
-  if (brdall == 0) {
-  Serial.print(" mainswitch off ");
-  Serial.print(mainswitch);
-  }
-  
+
+  brdall = digitalRead(mainswitch);
+  brd1 = digitalRead(board1power);
+  brd2 = digitalRead(board2power);
+  brd3 = digitalRead(board3power);
+
+
+
   Serial.print(" brdall ");
   Serial.print(brdall);
-  Serial.println(brdallc);
-  brd1 = digitalRead(8);
-  brd2 = digitalRead(9);
-  brd3 = digitalRead(10);
+
   Serial.print(" brd1 ");
   Serial.print(brd1);
-  Serial.print(" brd1 ");
+  Serial.print(" brd2 ");
   Serial.print(brd2);
-  Serial.print(" brd1 ");
+  Serial.print(" brd3 ");
   Serial.println(brd3);
 
 
 
-  if (brdall == 1) {
+  if (digitalRead(board1power)) {
+    if (digitalRead(board2power)) {
+      if (digitalRead(board3power)) {
+        brdallc = 2;
+      }
+    }
+  }
 
-    if (brdallc == 1) {
-      if (brd1 == 1) {
-        digitalWrite(board1switch, LOW);
-      } else {
-        digitalWrite(board1switch, HIGH);
-      }
-      if (brd2 == 1) {
-        digitalWrite(board2switch, LOW);
-      } else {
-        digitalWrite(board2switch, HIGH);
-      }
-      if (brd3 == 1) {
-        digitalWrite(board3switch, LOW);
-      } else {
-        digitalWrite(board3switch, HIGH);
-      }
-      delay(1000);
-      digitalWrite(board1switch, LOW);
-      digitalWrite(board2switch, LOW);
-      digitalWrite(board3switch, LOW);
-      Serial.println("LOW");
-      brdallc = (brdallc + 1);
-      if (brdallc > 1) {
-        brdallc = 10;
-        brdalld = 1;
+  if (digitalRead(!board1power)) {
+    if (digitalRead(!board2power)) {
+      if (digitalRead(!board3power)) {
+        brdalld = 2;
       }
     }
   }
 
 
+
+
+  Serial.print(" C ");
+  Serial.print(brdallc);
+  Serial.print(" D ");
+  Serial.print(brdalld);
+
+
+
+
+  if (brdall == 1) {
+    Serial.print(" mainswitch on ");
+    Serial.println(brdall);
+    if (FCOK == 0) {
+      Serial.print("NO HB POWERING OFF ");
+      // brdall = 0;
+    }
+  }
+
+  if (brdall == 0) {
+    Serial.print(" mainswitch off ");
+    Serial.println(mainswitch);
+
+    Serial.print(" brdall ");
+    Serial.println(brdall);
+    Serial.println(brdallc);
+  }
+
+
+
+
+  if (brdall == 1) {
+    Serial.println("TEST1");
+    if (brdallc == 1) {
+  
+      if (!digitalRead(board1power)) digitalWrite(board1switch, HIGH);
+      if (!digitalRead(board2power)) digitalWrite(board2switch, HIGH);
+      if (!digitalRead(board3power)) digitalWrite(board3switch, HIGH);
+      delay(2000);
+      Serial.println("TEST6");
+      digitalWrite(board1switch, LOW);
+      digitalWrite(board2switch, LOW);
+      digitalWrite(board3switch, LOW);
+      brdallc = 1;
+      Serial.println("HIGH");
+      brdalld = 1;
+    }
+  }
+
+
+
+
+
 if (brdall == 0) {
-      if (brdalld == 1) {
-      if (brd1 == 0) {
-        digitalWrite(board1switch, LOW);
-      } else {
-        digitalWrite(board1switch, HIGH);
-      }
-      if (brd2 == 0) {
-        digitalWrite(board2switch, LOW);
-      } else {
+
+  if (brdalld == 1) {
+    if (brd1 == 0) {
+      digitalWrite(board1switch, LOW);
+    }
+    if (brd1 == 1) {
+      digitalWrite(board1switch, HIGH);
+    }
+    if (brd2 == 0) {
+      digitalWrite(board2switch, LOW);
+      if (brd3 == 1) {
         digitalWrite(board2switch, HIGH);
       }
       if (brd3 == 0) {
         digitalWrite(board3switch, LOW);
-      } else {
-        digitalWrite(board3switch, HIGH);
-      }
-      delay(1000);
-      digitalWrite(board1switch, LOW);
-      digitalWrite(board2switch, LOW);
-      digitalWrite(board3switch, LOW);
-      Serial.println("LOW");
-      brdalld = (brdalld + 1);
-      if (brdalld > 1) {
-        brdalld = 10;
-        brdallc = 1;
+        if (brd3 == 1) {
+          digitalWrite(board3switch, HIGH);
+        }
+        delay(1000);
+        digitalWrite(board1switch, LOW);
+        digitalWrite(board2switch, LOW);
+        digitalWrite(board3switch, LOW);
+        Serial.println("LOW");
+        brdalld = (brdalld + 1);
+        if (brdalld > 1) {
+          brdalld = 1;
+          brdallc = 1;
+        }
       }
     }
-  Serial.println("HIGH");
+  }
 }
 }
 
 
 
-
-
-
-void Send1(int16_t uSteer, int16_t uSpeed) {
+void SendTHR(int16_t uSteer, int16_t uSpeed) {
   // Create command
   Command.start = (uint16_t)START_FRAME;
   Command.steer = (int16_t)uSteer;
   Command.speed = (int16_t)uSpeed;
   Command.checksum = (uint16_t)(Command.start ^ Command.steer ^ Command.speed);
   HoverSerial1.write((uint8_t *)&Command, sizeof(Command));
-  // Serial.println("send1");
-}
-
-void Send2(int16_t uSteer, int16_t uSpeed) {
-  // Create command
-  Command.start = (uint16_t)START_FRAME;
-  Command.steer = (int16_t)uSteer;
-  Command.speed = (int16_t)uSpeed;
-  Command.checksum = (uint16_t)(Command.start ^ Command.steer ^ Command.speed);
   HoverSerial2.write((uint8_t *)&Command, sizeof(Command));
-  //   Serial.println("send2");
-}
-
-
-void Send3(int16_t uSteer, int16_t uSpeed) {
-  // Create command
-  Command.start = (uint16_t)START_FRAME;
-  Command.steer = (int16_t)uSteer;
-  Command.speed = (int16_t)uSpeed;
-  Command.checksum = (uint16_t)(Command.start ^ Command.steer ^ Command.speed);
   HoverSerial3.write((uint8_t *)&Command, sizeof(Command));
-  //  Serial.println("send3");
+
+  //Serial.println("sendTHR");
 }
-
-
-
-
 
 
 
@@ -176,8 +187,7 @@ void Receive1() {
       RPML1 = (Feedback.speedL_meas);
       VOLT1 = (Feedback.batVoltage);
       TEMP1 = (Feedback.boardTemp);
-      //   Serial.println("VOLT1 ");
-      //  Serial.println(VOLT1);
+     /// Serial.println("ESC 1 Telem");
 
     } else {
       // Serial.println("Non-valid data skipped");
@@ -239,7 +249,7 @@ void Receive2() {
       //   Serial.println(VOLT2);
 
       // Print data to built-in Serial
-
+    //  Serial.println("ESC 2 Telem");
     } else {
       //  Serial.println("Non-valid data skipped");
     }
@@ -294,6 +304,7 @@ void Receive3() {
       TEMP3 = (Feedback.boardTemp);
       //    Serial.println("VOLT3 ");
       //   Serial.println(VOLT3);
+     // Serial.println("ESC 3 Telem");
     } else {
       //Serial.println("Non-valid data skipped");
     }
