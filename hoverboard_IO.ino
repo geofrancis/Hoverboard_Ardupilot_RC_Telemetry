@@ -71,14 +71,14 @@ void power() {
 
 
   if (brdall == 1) {
-    Serial.println("TEST1");
+  // Serial.println("TEST1");
     if (brdallc == 1) {
-      Serial.println("TEST2");
+   //   Serial.println("TEST2");
       if (!digitalRead(board1power)) digitalWrite(board1switch, HIGH);
       if (!digitalRead(board2power)) digitalWrite(board2switch, HIGH);
       if (!digitalRead(board3power)) digitalWrite(board3switch, HIGH);
       delay(2000);
-      Serial.println("TEST3");
+    //  Serial.println("TEST3");
       digitalWrite(board1switch, LOW);
       digitalWrite(board2switch, LOW);
       digitalWrite(board3switch, LOW);
