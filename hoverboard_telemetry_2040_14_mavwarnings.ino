@@ -266,31 +266,6 @@ void loop() {
     Serial.println(DI1O);
   }
 }
-/*
-
-
- Serial.print(" loop111------------------------------------------------------------------------------------");
-  previousMillis = currentMillis;
-  MAVLINK_HB();
-  MAVLINK_HB1();
-  MAVLINK_HB2();
-  MAVLINK_HB3();
-}
-
-unsigned long currentMillis2 = millis();
-if (currentMillis2 - previousMillis2 >= telem2) {
-  //  Serial.print(" loop2222------------------------------------------------------------------------------------");
-  previousMillis2 = currentMillis2;
-  if (VOLT1 > 1) { Mavlink_Telemetry1(); }
-  if (VOLT2 > 1) { Mavlink_Telemetry2(); }
-  if (VOLT3 > 1) { Mavlink_Telemetry3(); }
-  power();
-  FCHBC();
-}
-}
-
-
-*/
 
 void RTK() {
 
