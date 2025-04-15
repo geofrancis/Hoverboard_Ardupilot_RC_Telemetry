@@ -1,131 +1,151 @@
 
-
 void power() {
 
-
-  brdall = digitalRead(mainswitch);
-  brd1 = digitalRead(board1power);
-  brd2 = digitalRead(board2power);
-  brd3 = digitalRead(board3power);
+//armed = 1;
+ //FCOK = 1;
+ //active = 1;
 
 
-
-  Serial.print(" brdall ");
-  Serial.print(brdall);
-
-  Serial.print(" brd1 ");
-  Serial.print(brd1);
-  Serial.print(" brd2 ");
-  Serial.print(brd2);
-  Serial.print(" brd3 ");
-  Serial.println(brd3);
-
-
-
-  if (digitalRead(board1power)) {
-    if (digitalRead(board2power)) {
-      if (digitalRead(board3power)) {
-        brdallc = 2;
+  if (FCOK == 1) {
+    if (armed == 1) {
+      Serial.println("--------------------------------------------------------------------------------------------------------------ARMED");
+      if (digitalRead(board2power) == 0) {
+      two_on();
+      }
+      if (active == 1) {
+        Serial.println("-------------------------------------------------------------------------------------------------ACTIVE");
+        if (digitalRead(board1power) == 0) {
+        one_on();
+        }
+        if (digitalRead(board3power) == 0) {
+        three_on();
+        }
       }
     }
   }
 
-  if (digitalRead(!board1power)) {
-    if (digitalRead(!board2power)) {
-      if (digitalRead(!board3power)) {
-        brdalld = 2;
-      }
-    }
+  if (active == 0) {
+    Serial.println("---------------------------------------------------------------------------------------------------INACTIVE");
+    one_off();
+    three_off();
   }
 
-
-
-
-  Serial.print(" C ");
-  Serial.print(brdallc);
-  Serial.print(" D ");
-  Serial.print(brdalld);
-
-
-
-
-  if (brdall == 1) {
-    Serial.print(" mainswitch on ");
-    Serial.println(brdall);
-    if (FCOK == 0) {
-      Serial.print("NO HB POWERING OFF ");
-      // brdall = 0;
-    }
+  if (armed == 0) {
+    Serial.println("------------------------------------------------------------------------------------------------------------------DISARMED");
+    one_off();
+    two_off();
+    three_off();
   }
 
-  if (brdall == 0) {
-    Serial.print(" mainswitch off ");
-    Serial.println(mainswitch);
-
-    Serial.print(" brdall ");
-    Serial.println(brdall);
-    Serial.println(brdallc);
+  if (FCOK == 0) {
+Serial.println("---------------------------------------------------------------------------------------------------FCOK ");
+Serial.println(FCOK);
+    one_off();
+    two_off();
+    three_off();
   }
+}
 
 
-
-
-  if (brdall == 1) {
-  // Serial.println("TEST1");
-    if (brdallc == 1) {
-   //   Serial.println("TEST2");
-      if (!digitalRead(board1power)) digitalWrite(board1switch, HIGH);
-      if (!digitalRead(board2power)) digitalWrite(board2switch, HIGH);
-      if (!digitalRead(board3power)) digitalWrite(board3switch, HIGH);
+void one_on() {
+  Serial.println("------------------------------------------------------------------one on");
+  if (set1 > 1) {
+    Serial.println("-----------------------------------------------------------------------------------ESC 1 FAILURE");
+  }
+  if (set1 < 2) {
+    Serial.println(digitalRead(board1power));
+    if (digitalRead(board1power) == 0) {
+      digitalWrite(board1switch, HIGH);
       delay(2000);
-    //  Serial.println("TEST3");
       digitalWrite(board1switch, LOW);
-      digitalWrite(board2switch, LOW);
-      digitalWrite(board3switch, LOW);
-      brdallc = 1;
-      Serial.println("HIGH");
-      brdalld = 1;
-    }
-  }
-
-
-
-
-
-  if (brdall == 0) {
-
-    if (brdalld == 1) {
-      if (brd1 == 0) {
-        digitalWrite(board1switch, LOW);
-      }
-      if (brd1 == 1) {
-        digitalWrite(board1switch, HIGH);
-      }
-      if (brd2 == 0) {
-        digitalWrite(board2switch, LOW);
-        if (brd3 == 1) {
-          digitalWrite(board2switch, HIGH);
-        }
-        if (brd3 == 0) {
-          digitalWrite(board3switch, LOW);
-          if (brd3 == 1) {
-            digitalWrite(board3switch, HIGH);
-          }
-          delay(1000);
-          digitalWrite(board1switch, LOW);
-          digitalWrite(board2switch, LOW);
-          digitalWrite(board3switch, LOW);
-          Serial.println("LOW");
-          brdalld = (brdalld + 1);
-          if (brdalld > 1) {
-            brdalld = 1;
-            brdallc = 1;
-          }
-        }
+      set1++;
+      Serial.println(set1);
+      if (set1 > 2) {
+        Serial.println("---------------------------------------ESC 2 FAIL TO START");
       }
     }
   }
 }
+
+
+void two_on() {
+  Serial.println("--------------------------------------------------------------------two on");
+  if (set2 > 1) {
+    Serial.println("-----------------------------------------------------------------------------------ESC 2 FAILURE");
+  }
+  if (set2 < 2) {
+    Serial.println(digitalRead(board2power));
+    if (digitalRead(board2power) == 0) {
+      digitalWrite(board2switch, HIGH);
+      delay(2000);
+      digitalWrite(board2switch, LOW);
+      Serial.println(set2);
+      set2++;
+      if (set2 > 2) {
+        Serial.println("--------------------------------------ESC 2 FAIL TO START");
+      }
+    }
+  }
+}
+
+
+void three_on() {
+  Serial.println("----------------------------------------------------------------------three on");
+  if (set3 > 1) {
+    Serial.println("-----------------------------------------------------------------------------------ESC 3 FAILURE");
+  }
+  if (set3 < 2) {
+    Serial.println(digitalRead(board2power));
+    if (digitalRead(board3power) == 0) {
+      digitalWrite(board3switch, HIGH);
+      delay(2000);
+      digitalWrite(board3switch, LOW);
+      
+      Serial.println(set3);
+      set3++;
+      if (set3 > 2) {
+        Serial.println("------------------------------------ESC 3 FAIL TO START");
+      }
+    }
+  }
+}
+
+void one_off() {
+  Serial.println("------------------------------------------------------------------------------------one off");
+  Serial.println(digitalRead(board1power));
+  if (digitalRead(board1power) == 1) {
+    digitalWrite(board1switch, HIGH);
+    Serial.println("----------------------------------------------------------------------------------one switch");
+    delay(2000);
+    digitalWrite(board1switch, LOW);
+    delay(1000);
+  }
+}
+
+void two_off() {
+  Serial.println("------------------------------------------------------------------------------------two off");
+  Serial.println(digitalRead(board2power));
+  if (digitalRead(board2power) == 1) {
+    digitalWrite(board2switch, HIGH);
+    Serial.println("----------------------------------------------------------------------------------two switch");
+    delay(2000);
+    digitalWrite(board2switch, LOW);
+    delay(1000);
+  }
+}
+
+void three_off() {
+  Serial.println("------------------------------------------------------------------------------------three off");
+  Serial.println(digitalRead(board3power));
+  if (digitalRead(board3power) == 1) {
+    digitalWrite(board3switch, HIGH);
+    Serial.println("----------------------------------------------------------------------------------three switch");
+    delay(2000);
+    digitalWrite(board3switch, LOW);
+    delay(1000);
+  }
+}
+
 
 
 
@@ -203,7 +223,6 @@ void Receive1() {
 
 
 void Receive2() {
-
   // Check for new data availability in the Serial buffer
   if (HoverSerial2.available()) {
     incomingByte = HoverSerial2.read();                                  // Read the incoming byte

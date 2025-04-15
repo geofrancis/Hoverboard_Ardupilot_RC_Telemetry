@@ -37,15 +37,36 @@ void MavLink_RC() {
             mavlink_heartbeat_t hb;
             mavlink_msg_heartbeat_decode(&msg, &hb);
             HBWATCH();
-            //Serial.print("\nFlight Mode: ");
-            //Serial.println(hb.custom_mode);
+
+            if ((hb.type) == 10) {
+              if ((hb.custom_mode) == 4) {
+                Serial.println("HOLD MOTOR ON");
+                active = 0;
+              }
+              if ((hb.custom_mode) != 4) {
+                Serial.println("HOLD MOTOR OFF");
+                active = 1;
+              }
+            }
+            Serial.print("\nFlight Mode: ");
+            Serial.println(hb.custom_mode);
+            BASEMODE = (hb.base_mode);;
+            if (BASEMODE == 193) {
+              armed = 1;
+              Serial.println("------------------------------------------------------------------------------------ARMED");
+            }
+
+            if (BASEMODE == 65) {
+              Serial.println("------------------------------------------------------------------------------------DISARMED");
+              armed = 0;
+            }
 
             //  Serial.print("Type: ");
             //  Serial.println(hb.type);
             //  Serial.print("Autopilot: ");
             //  Serial.println(hb.autopilot);
-            //   Serial.print("Base Mode: ");
-            //   Serial.println(hb.base_mode);
+            Serial.print("Base Mode: ");
+            Serial.println(hb.base_mode);
             //  Serial.print("System Status: ");
             // Serial.println(hb.system_status);
             //   Serial.print("Mavlink Version: ");
@@ -72,6 +93,8 @@ void MavLink_RC() {
             //Send3(leftoutput3, rightoutput3);
           }
           break;
+
+       
       }
     }
   }
@@ -81,9 +104,9 @@ void MavLink_RC() {
 
 void FCHBC() {
   Serial.print("FCHB ");
- // Serial.println(FCHB);
+  // Serial.println(FCHB);
   if (FCHB == 0) {
-    Serial.print("NO FLIGHT CONTROLLER ");
+    Serial.println("-------------------------------------------------------------NO FC HEARTBEAT");
     Serial.println(FCOK);
     Serial.println(FCHB);
     FCOK = 0;
@@ -93,6 +116,7 @@ void FCHBC() {
     Serial.println(FCOK);
     Serial.print(FCHB);
     Serial.println("Beats ");
+    Serial.println("----------------------------------------------------------FC HEARTBEAT");
     FCHB = 0;
     FCOK = 1;
   }
@@ -103,7 +127,7 @@ void FCHBC() {
 
 void HBWATCH() {
   FCHB++;
-  //Serial.print("tick");
+  Serial.print("tick****************************************************************************");
 }
 
 
@@ -123,8 +147,10 @@ void MAVLINK_HB() {
 }
 
 
+
+
 void MAVLINK_HB1() {
-  if (brd1==1) {
+  if (brd1 == 1) {
     uint8_t autopilot_type = MAV_AUTOPILOT_INVALID;
     uint8_t system_mode = MAV_MODE_PREFLIGHT;  ///< Booting up
     uint32_t custom_mode = 1;                  ///< Custom mode, can be defined by user/adopter
@@ -141,7 +167,7 @@ void MAVLINK_HB1() {
 }
 
 void MAVLINK_HB2() {
-  if (brd2==1) {
+  if (brd2 == 1) {
     uint8_t autopilot_type = MAV_AUTOPILOT_INVALID;
     uint8_t system_mode = MAV_MODE_PREFLIGHT;  ///< Booting up
     uint32_t custom_mode = 2;                  ///< Custom mode, can be defined by user/adopter
@@ -158,7 +184,7 @@ void MAVLINK_HB2() {
 }
 
 void MAVLINK_HB3() {
-   if (brd3==1) {
+  if (brd3 == 1) {
     uint8_t autopilot_type = MAV_AUTOPILOT_INVALID;
     uint8_t system_mode = MAV_MODE_PREFLIGHT;  ///< Booting up
     uint32_t custom_mode = 3;                  ///< Custom mode, can be defined by user/adopter
@@ -174,164 +200,205 @@ void MAVLINK_HB3() {
   }
 }
 
-void Mavlink_Telemetry1() {
-   if (VOLT1 >1) {
+
+
+
+
+
+void MAVLINK_ESC_1() {
+  // Serial.print("ESC1");
   mavlink_message_t msg;
-  uint32_t time_boot_ms = millis();
-  //Serial.print("mavT1");
-  const char* name = "THRR1";
-  float value = (THRR1);
-  mavlink_msg_named_value_float_pack(1, 140, &msg, time_boot_ms, name, value);
+  uint64_t time_usec = 1;
+  uint8_t index = 1; /*<  Index of the first ESC in this message. minValue = 0, maxValue = 60, increment = 4.*/
+
+  int32_t rrpm[] = { 200, 400, 800, 300 };
+  float Voltage[] = { 20, 40, 80, 30 };
+  float current[] = { 20, 40, 80, 30 };
+
+
+
+
+  mavlink_msg_esc_status_pack(1, 143, &msg, 0, time_usec, rrpm, Voltage, current);
   uint8_t buf[MAVLINK_MAX_PACKET_LEN];
   uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
   Serial1.write(buf, len);
-
-  name = "THRL1";
-  value = THRL1;
-  mavlink_msg_named_value_float_pack(1, 140, &msg, time_boot_ms, name, value);
-  len = mavlink_msg_to_send_buffer(buf, &msg);
-  Serial1.write(buf, len);
-
-
-  name = "RPMR1";
-  value = RPMR1;
-  mavlink_msg_named_value_float_pack(1, 140, &msg, time_boot_ms, name, value);
-  len = mavlink_msg_to_send_buffer(buf, &msg);
-  Serial1.write(buf, len);
-
-  name = "RPML1";
-  value = RPML1;
-  mavlink_msg_named_value_float_pack(1, 140, &msg, time_boot_ms, name, value);
-  len = mavlink_msg_to_send_buffer(buf, &msg);
-  Serial1.write(buf, len);
-
-
-
-  name = "VOLT1";
-  value = (VOLT1 / 100);
-  mavlink_msg_named_value_float_pack(1, 140, &msg, time_boot_ms, name, value);
-  len = mavlink_msg_to_send_buffer(buf, &msg);
-  Serial1.write(buf, len);
-  //Serial.print("V1: ");
-//Serial.println(VOLT1);
-
-
-  name = "TEMP1";
-  value = (TEMP1 / 10);
-  mavlink_msg_named_value_float_pack(1, 140, &msg, time_boot_ms, name, value);
-  len = mavlink_msg_to_send_buffer(buf, &msg);
-  Serial1.write(buf, len);
 }
+
+
+
+
+void Mavlink_Telemetry1() {
+  if (VOLT1 > 1) {
+    mavlink_message_t msg;
+    uint32_t time_boot_ms = millis();
+    //Serial.print("mavT1");
+    const char* name = "THRR1";
+    float value = (THRR1);
+    mavlink_msg_named_value_float_pack(1, 140, &msg, time_boot_ms, name, value);
+    uint8_t buf[MAVLINK_MAX_PACKET_LEN];
+    uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
+    Serial1.write(buf, len);
+
+    name = "THRL1";
+    value = THRL1;
+    mavlink_msg_named_value_float_pack(1, 140, &msg, time_boot_ms, name, value);
+    len = mavlink_msg_to_send_buffer(buf, &msg);
+    Serial1.write(buf, len);
+
+
+    name = "RPMR1";
+    value = RPMR1;
+    mavlink_msg_named_value_float_pack(1, 140, &msg, time_boot_ms, name, value);
+    len = mavlink_msg_to_send_buffer(buf, &msg);
+    Serial1.write(buf, len);
+
+    name = "RPML1";
+    value = RPML1;
+    mavlink_msg_named_value_float_pack(1, 140, &msg, time_boot_ms, name, value);
+    len = mavlink_msg_to_send_buffer(buf, &msg);
+    Serial1.write(buf, len);
+
+
+
+    name = "VOLT1";
+    value = (VOLT1 / 100);
+    mavlink_msg_named_value_float_pack(1, 140, &msg, time_boot_ms, name, value);
+    len = mavlink_msg_to_send_buffer(buf, &msg);
+    Serial1.write(buf, len);
+    //Serial.print("V1: ");
+    //Serial.println(VOLT1);
+
+
+    name = "TEMP1";
+    value = (TEMP1 / 10);
+    mavlink_msg_named_value_float_pack(1, 140, &msg, time_boot_ms, name, value);
+    len = mavlink_msg_to_send_buffer(buf, &msg);
+    Serial1.write(buf, len);
+  }
 }
 
 
 
 void Mavlink_Telemetry2() {
-   if (VOLT2 >1) {
-  mavlink_message_t msg;
-  uint32_t time_boot_ms = millis();
-  //Serial.print("mavT2");
-  const char* name = "THRR2";
-  float value = (THRR2);
-  mavlink_msg_named_value_float_pack(1, 141, &msg, time_boot_ms, name, value);
-  uint8_t buf[MAVLINK_MAX_PACKET_LEN];
-  uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
-  Serial1.write(buf, len);
+  if (VOLT2 > 1) {
+    mavlink_message_t msg;
+    uint32_t time_boot_ms = millis();
+    //Serial.print("mavT2");
+    const char* name = "THRR2";
+    float value = (THRR2);
+    mavlink_msg_named_value_float_pack(1, 141, &msg, time_boot_ms, name, value);
+    uint8_t buf[MAVLINK_MAX_PACKET_LEN];
+    uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
+    Serial1.write(buf, len);
 
-  name = "THRL2";
-  value = THRL2;
-  mavlink_msg_named_value_float_pack(1, 141, &msg, time_boot_ms, name, value);
-  len = mavlink_msg_to_send_buffer(buf, &msg);
-  Serial1.write(buf, len);
-
-
-  name = "RPMR2";
-  value = RPMR2;
-  mavlink_msg_named_value_float_pack(1, 141, &msg, time_boot_ms, name, value);
-  len = mavlink_msg_to_send_buffer(buf, &msg);
-  Serial1.write(buf, len);
-
-  name = "RPML2";
-  value = RPML2;
-  mavlink_msg_named_value_float_pack(1, 141, &msg, time_boot_ms, name, value);
-  len = mavlink_msg_to_send_buffer(buf, &msg);
-  Serial1.write(buf, len);
+    name = "THRL2";
+    value = THRL2;
+    mavlink_msg_named_value_float_pack(1, 141, &msg, time_boot_ms, name, value);
+    len = mavlink_msg_to_send_buffer(buf, &msg);
+    Serial1.write(buf, len);
 
 
+    name = "RPMR2";
+    value = RPMR2;
+    mavlink_msg_named_value_float_pack(1, 141, &msg, time_boot_ms, name, value);
+    len = mavlink_msg_to_send_buffer(buf, &msg);
+    Serial1.write(buf, len);
 
-  name = "VOLT2";
-  value = (VOLT2 / 100);
-  mavlink_msg_named_value_float_pack(1, 141, &msg, time_boot_ms, name, value);
-  len = mavlink_msg_to_send_buffer(buf, &msg);
-  Serial1.write(buf, len);
- // Serial.print("V2: ");
-//Serial.println(VOLT2);
+    name = "RPML2";
+    value = RPML2;
+    mavlink_msg_named_value_float_pack(1, 141, &msg, time_boot_ms, name, value);
+    len = mavlink_msg_to_send_buffer(buf, &msg);
+    Serial1.write(buf, len);
 
 
-  name = "TEMP2";
-  value = (TEMP2 / 10);
-  mavlink_msg_named_value_float_pack(1, 141, &msg, time_boot_ms, name, value);
-  len = mavlink_msg_to_send_buffer(buf, &msg);
-  Serial1.write(buf, len);
-}
+
+    name = "VOLT2";
+    value = (VOLT2 / 100);
+    mavlink_msg_named_value_float_pack(1, 141, &msg, time_boot_ms, name, value);
+    len = mavlink_msg_to_send_buffer(buf, &msg);
+    Serial1.write(buf, len);
+    // Serial.print("V2: ");
+    //Serial.println(VOLT2);
+
+
+    name = "TEMP2";
+    value = (TEMP2 / 10);
+    mavlink_msg_named_value_float_pack(1, 141, &msg, time_boot_ms, name, value);
+    len = mavlink_msg_to_send_buffer(buf, &msg);
+    Serial1.write(buf, len);
+  }
 }
 
 
 void Mavlink_Telemetry3() {
-   if (VOLT3 >1) {
+  if (VOLT3 > 1) {
+    mavlink_message_t msg;
+    uint32_t time_boot_ms = millis();
+    //Serial.print("mavT3");
+    const char* name = "THRR3";
+    float value = (THRR3);
+    mavlink_msg_named_value_float_pack(1, 142, &msg, time_boot_ms, name, value);
+    uint8_t buf[MAVLINK_MAX_PACKET_LEN];
+    uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
+    Serial1.write(buf, len);
+
+    name = "THRL3";
+    value = THRL3;
+    mavlink_msg_named_value_float_pack(1, 142, &msg, time_boot_ms, name, value);
+    len = mavlink_msg_to_send_buffer(buf, &msg);
+    Serial1.write(buf, len);
+
+
+    name = "RPMR3";
+    value = RPMR3;
+    mavlink_msg_named_value_float_pack(1, 142, &msg, time_boot_ms, name, value);
+    len = mavlink_msg_to_send_buffer(buf, &msg);
+    Serial1.write(buf, len);
+
+    name = "RPML3";
+    value = RPML3;
+    mavlink_msg_named_value_float_pack(1, 142, &msg, time_boot_ms, name, value);
+    len = mavlink_msg_to_send_buffer(buf, &msg);
+    Serial1.write(buf, len);
+
+
+
+    name = "VOLT3";
+    value = (VOLT3 / 100);
+    mavlink_msg_named_value_float_pack(1, 142, &msg, time_boot_ms, name, value);
+    len = mavlink_msg_to_send_buffer(buf, &msg);
+    Serial1.write(buf, len);
+    // Serial.print("V3: ");
+    //Serial.println(VOLT3);
+
+
+    name = "TEMP3";
+    value = (TEMP3 / 10);
+    mavlink_msg_named_value_float_pack(1, 142, &msg, time_boot_ms, name, value);
+    len = mavlink_msg_to_send_buffer(buf, &msg);
+    Serial1.write(buf, len);
+  }
+}
+
+
+
+void MAVLINK_BATTHB() {
+  uint8_t autopilot_type = MAV_AUTOPILOT_INVALID;
+  uint8_t system_mode = MAV_MODE_PREFLIGHT;  ///< Booting up
+  uint32_t custom_mode = 0;                  ///< Custom mode, can be defined by user/adopter
+  uint8_t system_state = MAV_STATE_STANDBY;  ///< System ready for flight
   mavlink_message_t msg;
-  uint32_t time_boot_ms = millis();
-  //Serial.print("mavT3");
-  const char* name = "THRR3";
-  float value = (THRR3);
-  mavlink_msg_named_value_float_pack(1, 142, &msg, time_boot_ms, name, value);
   uint8_t buf[MAVLINK_MAX_PACKET_LEN];
+  int type = MAV_TYPE_GROUND_ROVER;
+  // Pack the message
+
+  mavlink_msg_heartbeat_pack(1, 180, &msg, type, autopilot_type, system_mode, custom_mode, system_state);
   uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
   Serial1.write(buf, len);
-
-  name = "THRL3";
-  value = THRL3;
-  mavlink_msg_named_value_float_pack(1, 142, &msg, time_boot_ms, name, value);
-  len = mavlink_msg_to_send_buffer(buf, &msg);
-  Serial1.write(buf, len);
-
-
-  name = "RPMR3";
-  value = RPMR3;
-  mavlink_msg_named_value_float_pack(1, 142, &msg, time_boot_ms, name, value);
-  len = mavlink_msg_to_send_buffer(buf, &msg);
-  Serial1.write(buf, len);
-
-  name = "RPML3";
-  value = RPML3;
-  mavlink_msg_named_value_float_pack(1, 142, &msg, time_boot_ms, name, value);
-  len = mavlink_msg_to_send_buffer(buf, &msg);
-  Serial1.write(buf, len);
-
-
-
-  name = "VOLT3";
-  value = (VOLT3 / 100);
-  mavlink_msg_named_value_float_pack(1, 142, &msg, time_boot_ms, name, value);
-  len = mavlink_msg_to_send_buffer(buf, &msg);
-  Serial1.write(buf, len);
- // Serial.print("V3: ");
-//Serial.println(VOLT3);
-
-
-  name = "TEMP3";
-  value = (TEMP3 / 10);
-  mavlink_msg_named_value_float_pack(1, 142, &msg, time_boot_ms, name, value);
-  len = mavlink_msg_to_send_buffer(buf, &msg);
-  Serial1.write(buf, len);
 }
-}
-
 
 
 void MAVBATTERY() {
-
-
 
   long C1 = myCellVoltages[1];
   long C2 = myCellVoltages[2];
