@@ -5,7 +5,10 @@ working:
 map left and right hoverboard channels to servo outputs 15 and 16.
 send telemetry from up to 3 hoverboards to ardupilot as named floats. 
 
-power management, switch boards off and on to save power.        
+power management has been updated, it no longer uses the Arupilot Relay output to control the motors. 
+
+when armed and in hold mode it will only start the centre ESC to hold position, once it changes to any other mode it will start the other 2 escs to drive.
+automatic esc shut down on loss of mavlink heartbeat.
 
 still to do
 tilt detection, read imu data and stop motors if tilt or roll exceeds a set limit.     
