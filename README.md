@@ -10,10 +10,6 @@ power management has been updated, it no longer uses the Arupilot Relay output t
 when armed and in hold mode it will only start the centre ESC to hold position, once it changes to any other mode it will start the other 2 escs to drive.
 automatic esc shut down on loss of mavlink heartbeat.
 
-still to do
-tilt detection, read imu data and stop motors if tilt or roll exceeds a set limit.     
-configure with parameters via mission planner. 
-
 ![hoverboard wiring](https://github.com/user-attachments/assets/d2a09282-b905-478c-9fef-c4fea551a423)
 
 ![Screenshot 2024-06-20 064302](https://github.com/geofrancis/Hoverboard_MAVLINK_RC_Telemetry/assets/5570278/07d68d38-3a74-4209-8ff4-57d675d888be)
