@@ -150,45 +150,6 @@ int set1 = 0;
 int set2 = 0;
 int set3 = 0;
 
-// Variables
-String inString = "";  // string to hold input
-int incomingBytes, BalanceCode, Length, highbyte, lowbyte;
-byte Mosfet_control, mosfetnow, BatteryConfigH, BatteryConfigL, bcl, bcln, bch, Checksum, switche;
-uint8_t BYTE1, BYTE2, BYTE3, BYTE4, BYTE5, BYTE6, BYTE7, BYTE8, BYTE9, BYTE10;
-uint8_t inInts[40], data[9];  // an array to hold incoming data, not seen any longer than 34 bytes, or 9
-uint16_t a16bitvar;
-float eresultf;  //Cellv1, Cellv2, Cellv3, Cellv4, Cellv5, Cellv6, Cellv7, Cellv8,
-
-// Global battery stat variables (For printing to displays)
-float CellMin = 5;  // Default value > max possible cell votlage
-float CellMax = 0;
-float Cellavg = 0;
-float Celldiff = 0;
-float myCellVoltages[20] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-int balancerStates[20] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-int myNumCells = 0;
-float PackVoltagef = 0;
-float PackCurrentf = 0;
-float RemainCapacityf = 0;
-int RSOC = 0;
-float Temp_probe_1f = 0;
-float Temp_probe_2f = 0;
-bool chargeFet = 0;
-bool dischargeFet = 0;
-bool cellOver = 0;
-bool cellUnder = 0;
-bool packOver = 0;
-bool PackUnder = 0;
-bool chargeOverTemp = 0;
-bool chargeUnderTemp = 0;
-bool dischargeOverTemp = 0;
-bool dischargeUnderTemp = 0;
-bool chargeOvercurrent = 0;
-bool dischargeOvercurrent = 0;
-bool shortCircuit = 0;
-bool AFEerror = 0;
-
-
 void setup() {
   delay(5000);
   Serial.begin(115200);   // USB
