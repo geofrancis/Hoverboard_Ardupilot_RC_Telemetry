@@ -86,7 +86,7 @@ unsigned long btnm = 0;  // will store last time LED was updated
 
 int BASEMODE = 0;
 int armed;
-int active=0;
+int active = 0;
 int THRR1;
 int THRL1;
 int THRR2;
@@ -146,9 +146,9 @@ SerialFeedback NewFeedback;
 
 int DI1O = 0;
 int set;
-int set1=0;
-int set2=0;
-int set3=0;
+int set1 = 0;
+int set2 = 0;
+int set3 = 0;
 
 // Variables
 String inString = "";  // string to hold input
@@ -233,7 +233,7 @@ void setup() {
   digitalWrite(board3switch, LOW);
   delay(2000);
 
-request_Mavlink();
+  request_Mavlink();
 
   mavlink_msg_statustext_pack(system_id, component_id, &msg, 2, "HOVERBOARD CONTROLLER ONLINE", id, chunk_seq);
   len = mavlink_msg_to_send_buffer(buf, &msg);
@@ -248,22 +248,20 @@ void setup1() {}
 void loop() {
 
   //Serial.println(" loop------------------------------------------------------------------------------------");
-  
- // Receive1();
- // Receive2();
- // Receive3();
+
+  Receive1();
+  Receive2();
+  Receive3();
 
   unsigned long currentMillis = millis();
 
   if (currentMillis - previousMillis >= telem) {
     //Serial.println(" loop111------------------------------------------------------------------------------------");
     previousMillis = currentMillis;
-  //  MAVLINK_HB();
- //   MAVLINK_HB1();
- //   MAVLINK_HB2();
- //   MAVLINK_HB3();
-//    MAVLINK_ESC_1();
-
+    MAVLINK_HB();
+    MAVLINK_HB1();
+    MAVLINK_HB2();
+    MAVLINK_HB3();
     if (DI1O == 1) { Mavlink_Telemetry1(); }
     if (DI1O == 2) { power(); }
     if (DI1O == 3) { Mavlink_Telemetry2(); }
@@ -275,17 +273,11 @@ void loop() {
     Serial.print("                                   DI1O  ");
     Serial.println(DI1O);
 
-    //BMS();
-    // MAVLINK_BATTHB();
-    // MAVBATTERY();
-  }
+
+}
 }
 
 
 void loop1() {
-MavLink_RC();
-
-
+  MavLink_RC();
 }
-
-

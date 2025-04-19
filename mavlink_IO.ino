@@ -50,7 +50,8 @@ void MavLink_RC() {
             }
             Serial.print("\nFlight Mode: ");
             Serial.println(hb.custom_mode);
-            BASEMODE = (hb.base_mode);;
+            BASEMODE = (hb.base_mode);
+            ;
             if (BASEMODE == 193) {
               armed = 1;
               Serial.println("------------------------------------------------------------------------------------ARMED");
@@ -85,16 +86,9 @@ void MavLink_RC() {
             // MAXRPM = map(SERVOCHANNEL.servo14_raw, 1000, 2000, 100, 300);
             leftoutput = map(SERVOCHANNEL.servo15_raw, 1000, 2000, -MAXRPM, MAXRPM);
             rightoutput = map(SERVOCHANNEL.servo16_raw, 1000, 2000, -MAXRPM, MAXRPM);
-            powerchannel = (SERVOCHANNEL.servo13_raw);
-            //Serial.println(powerchannel);
-
             SendTHR(leftoutput, rightoutput);
-            //Send2(leftoutput2, rightoutput2);
-            //Send3(leftoutput3, rightoutput3);
           }
           break;
-
-       
       }
     }
   }
@@ -198,30 +192,6 @@ void MAVLINK_HB3() {
     uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
     Serial1.write(buf, len);
   }
-}
-
-
-
-
-
-
-void MAVLINK_ESC_1() {
-  // Serial.print("ESC1");
-  mavlink_message_t msg;
-  uint64_t time_usec = 1;
-  uint8_t index = 1; /*<  Index of the first ESC in this message. minValue = 0, maxValue = 60, increment = 4.*/
-
-  int32_t rrpm[] = { 200, 400, 800, 300 };
-  float Voltage[] = { 20, 40, 80, 30 };
-  float current[] = { 20, 40, 80, 30 };
-
-
-
-
-  mavlink_msg_esc_status_pack(1, 143, &msg, 0, time_usec, rrpm, Voltage, current);
-  uint8_t buf[MAVLINK_MAX_PACKET_LEN];
-  uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
-  Serial1.write(buf, len);
 }
 
 
@@ -380,68 +350,3 @@ void Mavlink_Telemetry3() {
   }
 }
 
-
-
-void MAVLINK_BATTHB() {
-  uint8_t autopilot_type = MAV_AUTOPILOT_INVALID;
-  uint8_t system_mode = MAV_MODE_PREFLIGHT;  ///< Booting up
-  uint32_t custom_mode = 0;                  ///< Custom mode, can be defined by user/adopter
-  uint8_t system_state = MAV_STATE_STANDBY;  ///< System ready for flight
-  mavlink_message_t msg;
-  uint8_t buf[MAVLINK_MAX_PACKET_LEN];
-  int type = MAV_TYPE_GROUND_ROVER;
-  // Pack the message
-
-  mavlink_msg_heartbeat_pack(1, 180, &msg, type, autopilot_type, system_mode, custom_mode, system_state);
-  uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
-  Serial1.write(buf, len);
-}
-
-
-void MAVBATTERY() {
-
-  long C1 = myCellVoltages[1];
-  long C2 = myCellVoltages[2];
-  long C3 = myCellVoltages[3];
-  long C4 = myCellVoltages[4];
-  long C5 = myCellVoltages[5];
-  long C6 = myCellVoltages[6];
-  long C7 = myCellVoltages[7];
-  long C8 = myCellVoltages[8];
-  long C9 = myCellVoltages[9];
-  long C10 = myCellVoltages[10];
-  long C11 = myCellVoltages[11];
-  long C12 = myCellVoltages[12];
-  long C13 = myCellVoltages[13];
-  long C14 = myCellVoltages[14];
-  uint16_t CELLSA[10] = { C1, C2, C3, C4, C5, C6, C7, C8, C9, C10 };
-  uint16_t CELLSB[4] = { C11, C12, C13, C14 };
-
-  uint8_t system_id = 1;  // id of computer which is sending the command (ground control software has id of 255)
-  uint8_t component_id = 180;
-  mavlink_message_t msg;
-  uint8_t id = 0;
-  uint8_t battery_function = 2;  //propulsioni
-  uint8_t type = 3;              //liion
-  int16_t temperature = Temp_probe_1f;
-  uint16_t* voltages = CELLSA;
-  int16_t current_battery = 99;
-  int32_t current_consumed = (20000 - RemainCapacityf);
-  int32_t energy_consumed = 10000;
-  int8_t battery_remaining = RSOC;
-  int32_t time_remaining = 0;
-  uint8_t charge_state = 1;
-  uint16_t* voltages_ext = CELLSB;
-  uint8_t mode = 0;
-  uint32_t fault_bitmask = 0;
-
-
-  //Pack battery message
-  uint8_t buf[MAVLINK_MAX_PACKET_LEN];
-  mavlink_msg_battery_status_pack(system_id, component_id, &msg, id, battery_function, type, temperature, voltages, current_battery, current_consumed, energy_consumed, battery_remaining, time_remaining, charge_state, voltages_ext, mode, fault_bitmask);
-  uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);  // Send the message (.write sends as bytes)
-
-  //if (CELLS[1] > 1) {
-  Serial1.write(buf, len);  //Write data to serial port
-  //}
-}

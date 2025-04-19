@@ -1,24 +1,24 @@
 
 void power() {
 
-//armed = 1;
- //FCOK = 1;
- //active = 1;
+  //armed = 1;
+  //FCOK = 1;
+  //active = 1;
 
 
   if (FCOK == 1) {
     if (armed == 1) {
       Serial.println("--------------------------------------------------------------------------------------------------------------ARMED");
       if (digitalRead(board2power) == 0) {
-      two_on();
+        two_on();
       }
       if (active == 1) {
         Serial.println("-------------------------------------------------------------------------------------------------ACTIVE");
         if (digitalRead(board1power) == 0) {
-        one_on();
+          one_on();
         }
         if (digitalRead(board3power) == 0) {
-        three_on();
+          three_on();
         }
       }
     }
@@ -38,8 +38,8 @@ void power() {
   }
 
   if (FCOK == 0) {
-Serial.println("---------------------------------------------------------------------------------------------------FCOK ");
-Serial.println(FCOK);
+    Serial.println("---------------------------------------------------------------------------------------------------FCOK ");
+    Serial.println(FCOK);
     one_off();
     two_off();
     three_off();
@@ -100,7 +100,7 @@ void three_on() {
       digitalWrite(board3switch, HIGH);
       delay(2000);
       digitalWrite(board3switch, LOW);
-      
+
       Serial.println(set3);
       set3++;
       if (set3 > 2) {
