@@ -89,13 +89,13 @@ void MavLink_RC() {
 
 
             if (leftoutputraw > (1500 + DZ)) { leftoutput = map(SERVOCHANNEL.servo1_raw, (1500 + DZ), 2000, 0, MAXRPM); }
-            if (leftoutputraw < (1500 - DZ)) { leftoutput = map(SERVOCHANNEL.servo1_raw, (1500 - DZ), 0, 0, -MAXRPM); }
+            if (leftoutputraw < (1500 - DZ)) { leftoutput = map(SERVOCHANNEL.servo1_raw, (1500 - DZ), 1000, 0, -MAXRPM); }
             if (leftoutputraw < (1500 + DZ) && leftoutputraw > (1500 - DZ)) {
               leftoutput = 0;
             }
 
             if (rightoutputraw > (1500 + DZ)) { rightoutput = map(SERVOCHANNEL.servo2_raw, (1500 + DZ), 2000, 0, MAXRPM); }
-            if (rightoutputraw < (1500 - DZ)) { rightoutput = map(SERVOCHANNEL.servo2_raw, (1500 - DZ), 0, 0, -MAXRPM); }
+            if (rightoutputraw < (1500 - DZ)) { rightoutput = map(SERVOCHANNEL.servo2_raw, (1500 - DZ), 1000, 0, -MAXRPM); }
             if (rightoutputraw < (1500 + DZ) && rightoutputraw > (1500 - DZ)) {
               rightoutput = 0;
             }
