@@ -9,6 +9,8 @@ SerialPIO HoverSerial2(4, 5);
 SerialPIO HoverSerial3(6, 7);
 SerialPIO HoverSerial4(10, 11);
 
+int DZ = 20; // dead zone
+
 int brd1 = 0;
 int brd2 = 0;
 int brd3 = 0;
