@@ -84,8 +84,21 @@ void MavLink_RC() {
             //Serial.print("Chanel 13 (raw): ");
             //Serial.println(SERVOCHANNEL.servo13_raw);
             // MAXRPM = map(SERVOCHANNEL.servo14_raw, 1000, 2000, 100, 300);
-            leftoutput = map(SERVOCHANNEL.servo15_raw, 1000, 2000, -MAXRPM, MAXRPM);
-            rightoutput = map(SERVOCHANNEL.servo16_raw, 1000, 2000, -MAXRPM, MAXRPM);
+            int leftoutputraw = (SERVOCHANNEL.servo1_raw);
+            int rightoutputraw = (SERVOCHANNEL.servo2_raw);
+
+
+            if (leftoutputraw > (1500 + DZ)) { leftoutput = map(SERVOCHANNEL.servo1_raw, (1500 + DZ), 2000, 0, MAXRPM); }
+            if (leftoutputraw < (1500 - DZ)) { leftoutput = map(SERVOCHANNEL.servo1_raw, (1500 - DZ), 0, 0, -MAXRPM); }
+            if (leftoutputraw < (1500 + DZ) && leftoutputraw > (1500 - DZ)) {
+              leftoutput = 0;
+            }
+
+            if (rightoutputraw > (1500 + DZ)) { rightoutput = map(SERVOCHANNEL.servo2_raw, (1500 + DZ), 2000, 0, MAXRPM); }
+            if (rightoutputraw < (1500 - DZ)) { rightoutput = map(SERVOCHANNEL.servo2_raw, (1500 - DZ), 0, 0, -MAXRPM); }
+            if (rightoutputraw < (1500 + DZ) && rightoutputraw > (1500 - DZ)) {
+              rightoutput = 0;
+            }
             SendTHR(leftoutput, rightoutput);
           }
           break;
